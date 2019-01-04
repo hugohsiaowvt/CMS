@@ -3,18 +3,23 @@ package routers
 import (
 	"CMS/controllers"
 	"github.com/astaxie/beego"
-	//"github.com/astaxie/beego/context"
+	"github.com/astaxie/beego/context"
 )
 
 func init() {
-	//var FilterUser = func(ctx *context.Context) {
-	//	_, ok := ctx.Input.Session("uid").(int)
-	//	if !ok && ctx.Request.RequestURI != "/" {
-	//		ctx.Redirect(302, "/")
-	//	}
-	//}
-	//beego.InsertFilter("/*", beego.BeforeRouter, FilterUser)
-    beego.Router("/", &controllers.LoginController{})
+
+	beego.Router("/", &controllers.UserController{}, "*:Login")
+	beego.Router("/logout", &controllers.UserController{}, "*:Exit")
 	beego.Router("/dashboard", &controllers.DashBoardController{})
 	beego.Router("/test", &controllers.TestController{})
+
+	beego.InsertFilter("/*", beego.BeforeExec, FilterUser)
+
+}
+
+var FilterUser = func(ctx *context.Context) {
+	_, ok := ctx.Input.Session("uname").(string)
+	if !ok && ctx.Request.RequestURI != "/" {
+		ctx.Redirect(302, "")
+	}
 }
