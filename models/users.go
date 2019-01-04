@@ -4,6 +4,11 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
+const (
+	STATUS_OK = 1
+	STATUS_NOTOK = -1
+)
+
 type Users struct {
 	Id			int		`orm:"column(id)"`
 	Account		string	`orm:"column(account)"`

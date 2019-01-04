@@ -47,7 +47,7 @@ func (this *UserController) Login() {
 		}
 		models.GetUser(o, user, query)
 
-		if user.Status == 1 {
+		if user.Status == models.STATUS_OK {
 			// 登入次數加一
 			models.AddLoginTimes(o, user)
 			// 設定 cookie
