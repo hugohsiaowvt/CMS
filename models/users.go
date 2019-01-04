@@ -18,6 +18,11 @@ func (u *Users) TableName() string {
 	return "users"
 }
 
-func GetUser(o orm.Ormer, user, query *Users) {
-	o.Raw("SELECT * FROM users WHERE account = ? and password = ?", query.Account, query.Password).QueryRow(user)
+func GetUser(o orm.Ormer, user, query *Users) error {
+	return o.Raw("SELECT * FROM users WHERE account = ? and password = ?", query.Account, query.Password).QueryRow(user)
+}
+
+func AddLoginTimes(o orm.Ormer, query *Users) error {
+	_, err := o.Raw("UPDATE users SET login_times = login_times + 1 WHERE id = ?", query.Id).Exec()
+	return err
 }

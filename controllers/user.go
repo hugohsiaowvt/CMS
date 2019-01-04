@@ -24,15 +24,13 @@ func (this *UserController) Login() {
 		userName := this.GetSession("uname")
 		userPwd := this.GetSession("upwd")
 
-		//log.Println("user:" + userName.(string))
-
 		_, nameOk := userName.(string)
 		_, pwdOk := userPwd.(string)
 		if nameOk && pwdOk {
-			// 重定向
+			// 重新導向
 			this.Redirect("dashboard", 302)
 		} else {
-			// 获取 cookie
+			// 取得 cookie
 			this.Data["uname"] = this.Ctx.GetCookie("uname")
 			this.Data["upwd"] = this.Ctx.GetCookie("upwd")
 			this.TplName = "login.tpl"
@@ -47,15 +45,15 @@ func (this *UserController) Login() {
 			Account: userName,
 			Password: userPwd,
 		}
-
-		// insert
 		models.GetUser(o, user, query)
 
 		if user.Status == 1 {
-			// 设置 cookie
+			// 登入次數加一
+			models.AddLoginTimes(o, user)
+			// 設定 cookie
 			this.Ctx.SetCookie("uname", userName)
 			this.Ctx.SetCookie("upwd", userPwd)
-			// 设置 session
+			// 設定 session
 			this.SetSession("uname", userName)
 			this.SetSession("upwd", userPwd)
 			this.Redirect("dashboard", 302)
