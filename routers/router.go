@@ -11,6 +11,7 @@ func init() {
 	beego.Router("/", &controllers.UserController{}, "*:Login")
 	beego.Router("/logout", &controllers.UserController{}, "*:Exit")
 	beego.Router("/dashboard", &controllers.DashBoardController{})
+	beego.Router("/test_ping", &controllers.DashBoardController{}, "*:TestPing")
 
 	beego.InsertFilter("/*", beego.BeforeExec, FilterUser)
 
