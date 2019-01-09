@@ -7,5 +7,4 @@ import (
 func init() {
 	// register model
 	orm.RegisterModel(new(Users))
-
 }

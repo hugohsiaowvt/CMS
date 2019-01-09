@@ -1,53 +1,22 @@
-/* globals Chart:false, feather:false */
-
 (function () {
-    'use strict'
-
-    feather.replace()
-
-    // Graphs
-    var ctx = document.getElementById('myChart')
-    // eslint-disable-next-line no-unused-vars
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [
-                'Sunday',
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday'
-            ],
-            datasets: [{
-                data: [
-                    15339,
-                    21345,
-                    18483,
-                    24003,
-                    23489,
-                    24092,
-                    12034
-                ],
-                lineTension: 0,
-                backgroundColor: 'transparent',
-                borderColor: '#007bff',
-                borderWidth: 4,
-                pointBackgroundColor: '#007bff'
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: false
-                    }
-                }]
-            },
-            legend: {
-                display: false
+    $(document).ready(function () {
+        console.log("ready");
+        $('.nav.flex-column li a').click(function () {
+            var ctx = $(this).find("span").attr("data-feather");
+            var old = $('.nav.flex-column li a.nav-link.active').find("span").attr("data-feather");
+            if (old) {
+                $('.nav.flex-column li a.nav-link.active').removeClass("active");
             }
-        }
-    })
+            $(this).addClass('active');
+            $.ajax({
+                type:'get',
+                url:'/showPage',
+                data:{
+                    "page":ctx
+                },success:function(result){
+                    $(".table-responsive").html(result);
+                }
+            })
+        })
+    });
 }())
