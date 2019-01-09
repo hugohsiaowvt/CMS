@@ -6,15 +6,13 @@ import (
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
+	"fmt"
 )
 
 type DashBoardController struct {
 	beego.Controller
 }
 
-func (this *DashBoardController) Get() {
-	this.TplName = "frameset.tpl"
-}
 
 func (this *DashBoardController) TestPing() {
 
@@ -64,4 +62,38 @@ func (this *DashBoardController) TestPing() {
 	}
 
 	this.TplName = "test_ping.tpl"
+}
+
+type ShowPageController struct {
+	beego.Controller
+}
+
+func (c *DashBoardController) Get() {
+	Pages:= models.GeneratePages();
+	c.Data["Pages"]=Pages
+	c.TplName = "dashboard.tpl"
+
+	//內容頁面
+	/*c.Layout = "dashboard.tpl"
+	page := c.GetString("page")
+	if page == "" {
+		c.TplName = "testPage1.tpl"
+	} else {
+		fmt.Printf("\nkey:%s\n", page)
+		c.TplName = page
+	}*/
+
+}
+
+func (this *ShowPageController) ShowPage() {
+	//this.TplName = "dashboard.tpl"
+	//內容頁面
+	//this.Layout = "dashboard.tpl"
+	page := this.GetString("page")
+	if page == "" {
+		this.TplName = "testPage1.tpl"
+	} else {
+		fmt.Printf("\nkey:%s\n", page)
+		this.TplName = page
+	}
 }
