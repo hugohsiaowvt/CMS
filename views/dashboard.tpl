@@ -65,6 +65,7 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" style="padding-top:60px">
             <div class="table-responsive">
+                {{template "login.tpl" .}}
             </div>
         </main>
     </div>

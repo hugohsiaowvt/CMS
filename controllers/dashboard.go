@@ -72,7 +72,7 @@ func (c *DashBoardController) Get() {
 	Pages:= models.GeneratePages();
 	c.Data["Pages"]=Pages
 	c.TplName = "dashboard.tpl"
-
+	c.Data["testHello"]="test";
 	//內容頁面
 	/*c.Layout = "dashboard.tpl"
 	page := c.GetString("page")
@@ -97,3 +97,4 @@ func (this *ShowPageController) ShowPage() {
 		this.TplName = page
 	}
 }
+
