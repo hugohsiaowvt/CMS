@@ -1,9 +1,8 @@
 (function () {
-    console.log("onload")
+
 }())
 
 $(document).ready(function () {
-    console.log("ready")
     $("#main_container").show();
     $.ajax({
         type:'get',

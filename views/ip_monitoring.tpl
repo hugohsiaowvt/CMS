@@ -10,15 +10,15 @@
     <script type="text/javascript" src="/static/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript">
         (function () {
-            console.log("onload")
+
         }())
 
         $(document).ready(function () {
-            console.log("ready")
+
             $("#main_container").show();
             $.ajax({
                 type:'get',
-                url:'/monitoring/add',
+                url:'/monitoring/ips',
                 success:function(result){
                     buildDatas(result);
                 }
@@ -55,12 +55,12 @@
             var html ="";
             for ( var prop in result) {
                 html += " <tr><td>" +
-                    result[prop].monitor_group+"</td>" +
+                    prop+"</td>" +
+                    "<td>"+result[prop].monitor_group+"</td>" +
                     "<td>"+result[prop].title+"</td>" +
                     "<td>"+result[prop].ip+"</td> "+
                     "</tr>"
             }
-            console.log("html:"+html);
             $("#tbody_datas").html(html);
         }
 
@@ -79,6 +79,7 @@
             <thead>
             <tr>
                 <th>#</th>
+                <th>群組</th>
                 <th>測試項目</th>
                 <th>IP</th>
             </tr>

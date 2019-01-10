@@ -51,6 +51,23 @@ type PingData struct {
 	TestPlanCase	[]string
 }
 
+func (this *IpMonitoringController) GetIPList() {
+	o := orm.NewOrm()
+	allData := []models.TestPingData{}
+	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
+		return
+	}
+	Ips = Ips[:0]
+	fmt.Printf("count:%d\n", len(Ips))
+	for _, v := range allData {
+		mystruct := MonitoringItem{ Title:v.Item,Ip:v.Ip,Monitor_group:v.Category}
+		Ips = append(Ips,mystruct)
+	}
+
+	this.Data["json"] = &Ips
+	this.ServeJSON()
+}
+
 func (this *IpMonitoringController) TestPing() {
 
 	date1 := this.GetString("date")

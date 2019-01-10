@@ -47,12 +47,15 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     {{range $key, $val := .Pages}}
-                    <li class="nav-item" >
-                        <a class="nav-link" href="#">
-                            <span data-feather={{$val.LinkPage}}></span>
-                            {{$val.Tag}}
-                        </a>
-                    </li>
+                    <div align="left" style="margin-left: 20px">
+                        <li class="nav-item" >
+                            <a class="nav-link" href="#">
+                                <img width="15" height="15" src={{$val.IconPath}}/>
+                                <span data-feather={{$val.LinkPage}}></span>
+                                &nbsp;&nbsp;{{$val.Tag}}
+                            </a>
+                        </li>
+                    </div>
                     {{end}}
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
