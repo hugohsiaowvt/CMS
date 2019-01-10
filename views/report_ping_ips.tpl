@@ -8,11 +8,6 @@
     .tg .tg-baqh-green{text-align:center;vertical-align:center;background-color:#32EF32;}
     .tg .tg-p7ly{font-weight:bold;font-size:20px;text-align:center}
 </style>
-<form action="/test_ping">
-  Date:
-  <input type="date" name="date" value="{{.Date}}">
-  <input type="submit">
-</form>
 <table class="tg">
     <colgroup>
         <col style="width: 10%">

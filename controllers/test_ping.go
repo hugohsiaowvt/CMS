@@ -29,7 +29,6 @@ func (this *TestPingController) ReportPingIPs() {
 
 	date1 := this.GetString("date1")
 	date2 := this.GetString("date2")
-	dateTitle := date1[0:4] + "/" + date1[4:6] + "/" + date1[6:8]
 
 	o := orm.NewOrm()
 
@@ -53,7 +52,7 @@ func (this *TestPingController) ReportPingIPs() {
 		count[v.Id] = v.Count
 	}
 
-	this.Data["Date"] = dateTitle
+	this.Data["Date"] = date1
 	this.Data["Data"] = allData
 	this.Data["Count"] = count
 	this.Data["Result"] = resultData
@@ -72,5 +71,5 @@ func (this *TestPingController) ReportPingIPs() {
 		"0555",
 	}
 
-	this.TplName = "test_ping.tpl"
+	this.TplName = "report_ping_ips.tpl"
 }

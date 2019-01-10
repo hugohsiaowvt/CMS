@@ -50,8 +50,8 @@ INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('2', '�
 CREATE TABLE `CMS`.`testpingresult` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `item_id` BIGINT(20) NOT NULL COMMENT '測試高防細項id',
-  `date` VARCHAR(8) NOT NULL DEFAULT '' COMMENT '日期',
-  `time` VARCHAR(4) NOT NULL DEFAULT '' COMMENT '時間',
+  `date` VARCHAR(10) NOT NULL DEFAULT '' COMMENT '日期 yyyy-MM-dd',
+  `time` VARCHAR(4) NOT NULL DEFAULT '' COMMENT '時間 hhmm',
   `category` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防類別',
   `item` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防細項',
   `ip` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '測試高防IP',
