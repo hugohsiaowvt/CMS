@@ -54,6 +54,6 @@ func GetCategoryCount(o orm.Ormer, data *[]TestPingCategoryCount) (int64, error)
 	return o.Raw("SELECT category_id AS id, count(category_id) AS count  FROM testpingitem GROUP BY category_id;").QueryRows(data)
 }
 
-func GetTestPingResultByDate(o orm.Ormer, data *[]TestPingResultData, date string) (int64, error) {
-	return o.Raw("SELECT ti.id AS item_id, tr.id AS result_id, tr.time, tr.status FROM testpingcategory AS tc, testpingitem AS ti, testpingresult AS tr WHERE tc.id = ti.category_id AND ti.id = tr.item_id AND tr.date=?;", date).QueryRows(data)
+func GetTestPingResultByDate(o orm.Ormer, data *[]TestPingResultData, date1, date2 string) (int64, error) {
+	return o.Raw("SELECT item_id, id AS result_id, time, status FROM testpingresult WHERE (date=? AND time >= '1830') OR (date=? AND time <= '0600');", date1, date2).QueryRows(data)
 }

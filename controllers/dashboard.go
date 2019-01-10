@@ -16,8 +16,20 @@ type DashBoardController struct {
 
 func (this *DashBoardController) TestPing() {
 
-	t := time.Now().Local()
-	date := t.Format("20060102")
+	date1 := this.GetString("date1")
+	date2 := this.GetString("date2")
+
+	if date1 == "" || date2 == "" {
+		t := time.Now().Local()
+		date1 = t.Format("20060102")
+		nextDay, _ := time.ParseDuration("24h")
+		t = t.Add(nextDay)
+		date2 = t.Format("20060102")
+		beego.Debug(date1, date2)
+	}
+
+	dateTitle := date1[0:4] + "/" + date1[4:6] + "/" + date1[6:8]
+
 
 	o := orm.NewOrm()
 
@@ -32,7 +44,7 @@ func (this *DashBoardController) TestPing() {
 	}
 
 	resultData := []models.TestPingResultData{}
-	if _, err := models.GetTestPingResultByDate(o, &resultData, date); err != nil {
+	if _, err := models.GetTestPingResultByDate(o, &resultData, date1, date2); err != nil {
 		return
 	}
 
@@ -43,6 +55,7 @@ func (this *DashBoardController) TestPing() {
 
 	beego.Debug(resultData)
 
+	this.Data["Date"] = dateTitle
 	this.Data["Data"] = allData
 	this.Data["Count"] = count
 	this.Data["Result"] = resultData

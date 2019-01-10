@@ -26,7 +26,7 @@
         <col style="width: 6%">
     </colgroup>
     <tr>
-        <th class="tg-p7ly" colspan="14">2018/01/02夜間高防400G、800G各IP試ping結果</th>
+        <th class="tg-p7ly" colspan="14">{{.Date}}夜間高防400G、800G各IP試ping結果</th>
     </tr>
     <tr>
         <td class="tg-s6z2" colspan="2">測試項目</td>

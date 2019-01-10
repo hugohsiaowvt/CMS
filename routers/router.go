@@ -18,6 +18,10 @@ func init() {
 
 	beego.Router("/monitoring/add", &controllers.IpMonitoringController{},"*:AddIPMonitoring")
 	beego.Router("/monitoring/del", &controllers.IpMonitoringController{},"*:DelIPMonitoring")
+
+	beego.Router("/report/pingips", &controllers.TestPingController{}, "*:ReportPingIPs")
+	beego.Router("/api/pingips", &controllers.TestPingController{}, "*:PingIPs")
+
 	beego.InsertFilter("/*", beego.BeforeExec, FilterUser)
 
 }
@@ -25,6 +29,9 @@ func init() {
 var FilterUser = func(ctx *context.Context) {
 	_, ok := ctx.Input.Session("uname").(string)
 	if !ok && ctx.Request.RequestURI != "/" {
-		ctx.Redirect(302, "")
+		// api和報表不用登入就可以呼叫
+		if string(ctx.Request.RequestURI[0:4]) != "/api" && string(ctx.Request.RequestURI[0:7]) != "/report" {
+			ctx.Redirect(302, "")
+		}
 	}
 }
