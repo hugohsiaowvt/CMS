@@ -74,7 +74,7 @@
         <a href="#" class="easyui-linkbutton" plain="true" iconCls="icon-cancel" onclick="delIP()">刪除監控</a>
         <a href="#" class="easyui-linkbutton" plain="true" iconCls="icon-search" onclick="SearchReport()">查詢</a>
     </div>
-    <div class="table-responsive">
+    <div>
         <table class="table table-striped table-sm">
             <thead>
             <tr>

@@ -43,7 +43,6 @@ function buildDatas(result) {
     }
 
     var Date = result.Date;
-    console.log("Date:"+result.TestPlanCase.length)
 }
 
 function GenerateTestPlan(id , cases) {
@@ -63,7 +62,6 @@ function GrenerateRow(id,casetime) {
         var timecase = casetime[prop];
         node += '<td id="td'+timecase+'">'+"  "+'</td>'
     }
-    console.log("node:"+node);
     return node;
 }
 function GreneratePingStatus( resultData ) {
