@@ -2,27 +2,56 @@ package controllers
 
 import (
 	"CMS/models"
-	"github.com/astaxie/beego/orm"
-	"time"
+	"CMS/utils"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"sync"
+	"time"
 )
 
 type TestPingController struct {
 	beego.Controller
 }
 
+var waitGroup = new(sync.WaitGroup)
+
 func (this *TestPingController) PingIPs() {
 	recordTime := this.GetString("time")
-	beego.Debug(recordTime)
 
-	t := time.Now()
-	d, _ := time.ParseDuration("-24h")
-	d1 := t.Add(d)
-	beego.Debug(d1.Format("20060102"))
-	// time.Now().Format("20060102")   date
-	// time.Now().Format("1504")   time
+	t := time.Now().Local()
+	date := t.Format("2006-01-02")
+
+	o := orm.NewOrm()
+
+	allData := []models.TestPingData{}
+	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
+		this.ServeJSON()
+	}
+
+	for _, v := range allData {
+		waitGroup.Add(1)
+		go ping(v, date, recordTime)
+	}
+
+	waitGroup.Wait()
 
 	this.ServeJSON()
+}
+
+func ping(data models.TestPingData, date, recordTime string) {
+	o := orm.NewOrm()
+	status := -1
+	for i := 0; i < 5; i++ {
+		if alive := utils.Ping(data.Ip); alive {
+			status = 1
+		}
+	}
+
+	if err := models.InsertTestPingResult(o, data, date, recordTime, status); err != nil {
+
+	}
+
+	waitGroup.Done()
 }
 
 func (this *TestPingController) ReportPingIPs() {

@@ -32,6 +32,7 @@ type TestPingData struct {
 	ItemId		int		`orm:"column(item_id)"`
 	Category	string	`orm:"column(category)"`
 	Item		string	`orm:"column(item)"`
+	Ip			string	`orm:"column(ip)"`
 }
 
 type TestPingCategoryCount struct {
@@ -47,7 +48,7 @@ type TestPingResultData struct {
 }
 
 func GetAllTestPingData(o orm.Ormer, data *[]TestPingData) (int64, error) {
-	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
+	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
 }
 
 func GetCategoryCount(o orm.Ormer, data *[]TestPingCategoryCount) (int64, error) {
@@ -56,4 +57,10 @@ func GetCategoryCount(o orm.Ormer, data *[]TestPingCategoryCount) (int64, error)
 
 func GetTestPingResultByDate(o orm.Ormer, data *[]TestPingResultData, date1, date2 string) (int64, error) {
 	return o.Raw("SELECT item_id, id AS result_id, time, status FROM testpingresult WHERE (date=? AND time >= '1830') OR (date=? AND time <= '0600');", date1, date2).QueryRows(data)
+}
+
+func InsertTestPingResult(o orm.Ormer, data TestPingData, date, time string, status int) error {
+	_, err := o.Raw("INSERT INTO `CMS`.`testpingresult` (`item_id`, `date`, `time`, `category`, `item`, `ip`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?);",
+		data.ItemId, date, time, data.Category, data.Item, data.Ip, status).Exec()
+	return err
 }
