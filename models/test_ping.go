@@ -47,6 +47,25 @@ type TestPingResultData struct {
 	Status		int		`orm:"column(status)"`
 }
 
+var TestPlanTime []string = []string {
+	"PM6:30",
+	"PM7:45",
+	"PM8:15",
+	"PM9:30",
+	"PM10:45",
+	"PM11:15",
+	"AM00:30",
+	"AM01:45",
+	"AM02:15",
+	"AM03:30",
+	"AM04:45",
+	"AM05:55",
+}
+
+func GetTestPlanTime() []string {
+	return TestPlanTime;
+}
+
 func GetAllTestPingData(o orm.Ormer, data *[]TestPingData) (int64, error) {
 	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
 }

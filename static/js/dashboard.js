@@ -14,7 +14,11 @@
     SelectPage("login.tpl");
 }())
 
+var currentPage ;
+
 function SelectPage( sPage) {
+    if(currentPage == sPage)
+        return;
     $.ajax({
         type:'get',
         url:'/dashboard/showPage',
@@ -22,6 +26,7 @@ function SelectPage( sPage) {
             "page":sPage
         },success:function(result){
             $(".table-responsive").html(result);
+            currentPage = sPage;
         }
     })
 }
