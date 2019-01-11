@@ -54,10 +54,10 @@ function buildDatas(result) {
     var html = ""
     for ( var prop in result.AllData) {
         var data = result.AllData[prop];
-        var CategoryId = data.CategoryId;
-        var ItemId = data.ItemId;
-        var Category = data.Category;
-        var Item = data.Item;
+        var CategoryId = data.CategoryId; //分類 id int
+        var ItemId = data.ItemId;  // IP id  int
+        var Category = data.Category;  // 分類  string
+        var Item = data.Item;   //IP Title  string
         if (Category!=Group) {
             Group = Category;
             var table = '<table class="table table-striped table-sm" id="t'+Group+'"></table>';
@@ -74,33 +74,43 @@ function buildDatas(result) {
 
     var Date = result.Date;
 }
-function EditStatus(e) {
+function EditStatus(parent_id, e) {
 
+    var text = document.getElementById("tr"+parent_id);
+    var tr = "#tr"+parent_id;
+    var td = "#td"+e;
+    var node = $(tr+" "+td).find("div");
+    var status = node.attr("data-status");
+    if(status == -1 || status == undefined) {
+        node.find("button").attr('class', 'btn btn-outline-primary').text("正常");
+        node.attr("data-status",1);
+    } else if (status == 1){
+        node.find("button").attr('class', 'btn btn-outline-danger').text("異常");
+        node.attr("data-status",-1);
+    }
+    console.log(text);
 }
 function GenerateTestPlan(id , cases) {
     var node = $("#main_container").find("table#"+id);
     var caseTitle = '<thead><tr>' +
-        '<th>Id</th>' +
-        '<th>測試項目</th>';
+        '<th class="text-center">Id</th>' +
+        '<th class="text-center">測試項目</th>';
     for ( var prop in cases) {
-        caseTitle += '<th>'+cases[prop]+'</th>'
+        caseTitle += '<th class="text-center">'+cases[prop]+'</th>'
     }
     caseTitle+= '</tr></thead>'
     node.append(caseTitle);
 }
-function GrenerateRow(id,casetime) {
+function GrenerateRow(parent_id,casetime) {
     var node = ""
     for ( var prop in casetime) {
         var timecase = casetime[prop];
         if(EditMode) {
-            console.log("Editmode1:"+EditMode);
-           /* node += '<td id="td'+timecase+'">'+'<div id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(\''+timecase+'\')">尚無值</button>'+'</div></td>'*/
-            node += '<td id="td'+timecase+'">'+'<div id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(this)">尚無值</button>'+'</div></td>'
+            node += '<td id="td'+timecase+'">'+'<div class="text-center" id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(\''+parent_id+'\',\''+timecase+'\')">尚無值</button>'+'</div></td>'
         }else {
             console.log("Editmode2:"+EditMode);
             node += '<td id="td'+timecase+'">'+"  "+'</td>'
         }
-
     }
     return node;
 }
@@ -112,17 +122,18 @@ function GreneratePingStatus( resultData ) {
         var tdID = "td"+statusItem.Time;
         var status = statusItem.Status;
         if(EditMode) {
+            $("#"+trID+" #"+tdID+" div").attr("data-status",status);
             if(status == -1){
-                $("#"+trID+" #"+tdID+" div").attr("data-id",statusItem.ItemId);
-                $("#"+trID+" #"+tdID).find('button').text("異常").attr('class', 'btn btn-outline-danger').attr('data-id',statusItem.ItemId);}
+                $("#"+trID+" #"+tdID).find('button').text("異常").attr('class', 'btn btn-outline-danger');
+            }
             else if(status == 1) {
-                $("#"+trID+" #"+tdID).find('button').text("正常").attr('class', 'btn btn-outline-primary').attr('data-id',statusItem.ItemId);
+                $("#"+trID+" #"+tdID).find('button').text("正常").attr('class', 'btn btn-outline-primary')
             }
         } else {
             if(status == -1)
-                $("#"+trID+" #"+tdID).text("異常").css('color', 'red');
+                $("#"+trID+" #"+tdID).text("異常").css('color', 'red').attr('class','text-center');
             else if(status == 1) {
-                $("#"+trID+" #"+tdID).text("正常").css('color', 'blue');
+                $("#"+trID+" #"+tdID).text("正常").css('color', 'blue').attr('class','text-center');
             }
         }
 
