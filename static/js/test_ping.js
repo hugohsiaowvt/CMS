@@ -4,11 +4,15 @@
 
 $(document).ready(function () {
     $("#main_container").show();
+    var now = new Date();
+    var title = now.format("yyyy-MM-dd");
+    console.log(now);
+    $("#date").val(title)
     $.ajax({
         type:'get',
         url:'/monitoring/ping',
         data:{
-            "date":"2019-01-10",
+            "date":"2019-01-09",
         },
         success:function(result){
             buildDatas(result);

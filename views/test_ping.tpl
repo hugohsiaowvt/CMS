@@ -21,7 +21,14 @@
 </head>
 <body>
 <div id="main_container">
-    <h2>排程監聽</h2>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">排程監聽</h1>
+
+        <div class="btn-toolbar mb-2 mb-md-0" style="margin-right: 20px">
+            <span style="align-self: center">選擇日期：</span> <input type="date" class="btn btn-sm btn-outline-secondary " id="date" name="trip-start">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+    </div>
 </div>
 </body>
 <script></script>
