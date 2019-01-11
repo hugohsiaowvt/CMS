@@ -11,7 +11,7 @@
         })
     });
 
-    SelectPage("login.tpl");
+    SelectPage("welcome.tpl");
 }())
 
 var currentPage ;

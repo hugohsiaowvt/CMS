@@ -4,7 +4,6 @@
 
 $(document).ready(function () {
     $("#main_container").show();
-
     $('.form_datetime').datetimepicker({
         format: 'yyyy-mm-dd',
         autoclose: 1,
@@ -13,22 +12,28 @@ $(document).ready(function () {
         minView: 2,
         forceParse: 0,
         showMeridian: 1,
-        setDate: new Date()
     }).on('changeDate', function(e) {
         var date = $('#date').val();
-        $.ajax({
-            type: 'get',
-            url: '/monitoring/ping',
-            data:{
-                "date": date,
-            },
-            success:function(result){
-                buildDatas(result);
-            }
-        })
+        $("#main_container").empty();
+        updatDate();
     });
     $('.form_datetime').datetimepicker("setDate", new Date());
+    updatDate();
 })
+
+function updatDate() {
+    var date = $('#date').val();
+    $.ajax({
+        type: 'get',
+        url: '/monitoring/ping',
+        data:{
+            "date": date,
+        },
+        success:function(result){
+            buildDatas(result);
+        }
+    })
+}
 
 function buildDatas(result) {
     var Group = ""
