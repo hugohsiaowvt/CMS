@@ -142,26 +142,31 @@ func (this *IpMonitoringController) AddPingResult() {
 	var categoryId int
 	var category, item, ip string
 
-	beego.Debug(itemId, date, time, status)
+	this.Data["json"] = 0
 
-	o := orm.NewOrm()
+	if isToday := CheckIsToday(date); isToday {
 
-	allData := []models.TestPingData{}
-	if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
-		beego.Debug(err)
-	}
+		o := orm.NewOrm()
 
-	for _, v := range allData {
-		if v.ItemId == itemId {
-			categoryId = v.CategoryId
-			category = v.Category
-			item = v.Item
-			ip = v.Ip
+		allData := []models.TestPingData{}
+		if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
+			beego.Debug(err)
 		}
-	}
 
-	if err := models.AddPingResult(o, categoryId, itemId, status, date, time, category, item, ip); err != nil {
-		beego.Debug(err)
+		for _, v := range allData {
+			if v.ItemId == itemId {
+				categoryId = v.CategoryId
+				category = v.Category
+				item = v.Item
+				ip = v.Ip
+			}
+		}
+
+		if err := models.AddPingResult(o, categoryId, itemId, status, date, time, category, item, ip); err != nil {
+			beego.Debug(err)
+		} else {
+			this.Data["json"] = 1
+		}
 	}
 
 	this.ServeJSON()
