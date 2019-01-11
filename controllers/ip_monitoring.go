@@ -6,6 +6,7 @@ import (
 	"CMS/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"strconv"
 	"time"
 )
 
@@ -129,4 +130,44 @@ func (this *IpMonitoringController) TestPing() {
 
 	this.Data["json"] = &PingData{ Date: date1 , AllData:allData, Count:count, Result:resultData , Times:times ,TestPlanCase:conf.TEST_PLAN_TIME  }
 	this.ServeJSON()
+}
+
+func (this *IpMonitoringController) AddPingResult() {
+
+	itemId, _ := strconv.Atoi(this.GetString("item_id"))
+	date := this.GetString("date")
+	time := this.GetString("time")
+	status, _ := strconv.Atoi(this.GetString("status"))
+
+	var categoryId int
+	var category, item, ip string
+
+	beego.Debug(itemId, date, time, status)
+
+	o := orm.NewOrm()
+
+	allData := []models.TestPingData{}
+	if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
+		beego.Debug(err)
+	}
+
+	for _, v := range allData {
+		if v.ItemId == itemId {
+			categoryId = v.CategoryId
+			category = v.Category
+			item = v.Item
+			ip = v.Ip
+		}
+	}
+
+	if err := models.AddPingResult(o, categoryId, itemId, status, date, time, category, item, ip); err != nil {
+		beego.Debug(err)
+	}
+
+	this.ServeJSON()
+
+}
+
+func (this *IpMonitoringController) EditPingResult() {
+
 }

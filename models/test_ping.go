@@ -85,3 +85,9 @@ func DelItem(o orm.Ormer, id int) error {
 	_, err := o.Raw("DELETE FROM `CMS`.`testpingitem` WHERE `id` = ?;", id).Exec()
 	return err
 }
+
+func AddPingResult(o orm.Ormer, categoryId, itemId, status int, date, time, category, item, ip string) error {
+	_, err := o.Raw("INSERT INTO `CMS`.`testpingresult` (`category_id`, `item_id`, `date`, `time`, `category`, `item`, `ip`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+		categoryId, itemId, date, time, category, item, ip, status).Exec()
+	return err
+}

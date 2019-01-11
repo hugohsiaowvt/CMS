@@ -13,11 +13,14 @@ func init() {
 
 	beego.Router("/dashboard", &controllers.DashBoardController{})
 	beego.Router("/dashboard/showPage", &controllers.ShowPageController{},"*:ShowPage")
+	beego.Router("/test_ping", &controllers.DashBoardController{},"*:TestPing")
 
 	beego.Router("/monitoring/add", &controllers.IpMonitoringController{},"*:AddIPMonitoring")
 	beego.Router("/monitoring/del", &controllers.IpMonitoringController{},"*:DelIPMonitoring")
 	beego.Router("/monitoring/ping", &controllers.IpMonitoringController{},"*:TestPing")
 	beego.Router("/monitoring/ips", &controllers.IpMonitoringController{},"*:GetIPList")
+	beego.Router("/pingresult/add", &controllers.IpMonitoringController{},"*:AddPingResult")
+	beego.Router("/pingresult/edit", &controllers.IpMonitoringController{},"*:EditPingResult")
 
 	beego.Router("/report/pingips", &controllers.TestPingController{}, "*:ReportPingIPs")
 	beego.Router("/api/pingips", &controllers.TestPingController{}, "*:PingIPs")
