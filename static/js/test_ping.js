@@ -67,7 +67,7 @@ function buildDatas(result) {
         var node = $("#main_container").find("table#t"+Group);
         var nodeId = "tr"+ItemId;
         var extNode = GrenerateRow(ItemId,result.Times);
-        var itemnode = '<tr id="'+nodeId+'"><td>'+ItemId+'</td><td>'+Item+'</td>'+ extNode +'</tr>'
+        var itemnode = '<tr id="'+nodeId+'"><td class="text-center">'+ItemId+'</td><td class="text-center">'+Item+'</td>'+ extNode +'</tr>'
         node.append(itemnode);
         GreneratePingStatus(result.Result)
     }
@@ -81,14 +81,41 @@ function EditStatus(parent_id, e) {
     var td = "#td"+e;
     var node = $(tr+" "+td).find("div");
     var status = node.attr("data-status");
-    if(status == -1 || status == undefined) {
-        node.find("button").attr('class', 'btn btn-outline-primary').text("正常");
-        node.attr("data-status",1);
-    } else if (status == 1){
-        node.find("button").attr('class', 'btn btn-outline-danger').text("異常");
-        node.attr("data-status",-1);
+    var resultID = node.attr("data-resultid");
+    var url = "/pingresult/edit";
+    switch (status) {
+        case undefined:
+            var url = "/pingresult/add";
+        case "-1":
+            status = 1
+            node.find("button").attr('class', 'btn btn-outline-primary').text("正常");
+            node.attr("data-status",status);
+            break;
+        case "1":
+            status = -1
+            node.find("button").attr('class', 'btn btn-outline-danger').text("異常");
+            node.attr("data-status",status);
+            break
     }
-    console.log(text);
+    var data = {
+        "item_id":parent_id,
+        "date":$("#date").val(),
+        "time":e,
+        "status" : status,
+    }
+    ModifyStatus(url,data);
+}
+
+function ModifyStatus(url,data) {
+    console.log(url,data);
+    $.ajax({
+        type: 'get',
+        url: url,
+        data:data,
+        success:function(result){
+            console.log(result)
+        }
+    })
 }
 function GenerateTestPlan(id , cases) {
     var node = $("#main_container").find("table#"+id);
@@ -108,7 +135,6 @@ function GrenerateRow(parent_id,casetime) {
         if(EditMode) {
             node += '<td id="td'+timecase+'">'+'<div class="text-center" id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(\''+parent_id+'\',\''+timecase+'\')">尚無值</button>'+'</div></td>'
         }else {
-            console.log("Editmode2:"+EditMode);
             node += '<td id="td'+timecase+'">'+"  "+'</td>'
         }
     }
@@ -120,9 +146,10 @@ function GreneratePingStatus( resultData ) {
         var statusItem = resultData[prop];
         var trID = "tr"+statusItem.ItemId;
         var tdID = "td"+statusItem.Time;
+        var resultID = statusItem.ResultId;
         var status = statusItem.Status;
         if(EditMode) {
-            $("#"+trID+" #"+tdID+" div").attr("data-status",status);
+            $("#"+trID+" #"+tdID+" div").attr("data-status",status).attr("data-resultid",resultID);
             if(status == -1){
                 $("#"+trID+" #"+tdID).find('button').text("異常").attr('class', 'btn btn-outline-danger');
             }
