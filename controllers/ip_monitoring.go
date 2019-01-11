@@ -95,28 +95,28 @@ func (this *IpMonitoringController) TestPing() {
 	allData := []models.TestPingData{}
 	if isToday {
 		if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
-			return
+			beego.Debug(err)
 		}
 	} else {
 		if _, err := models.GetPreviousPingData(o, &allData, date1, date2); err != nil {
-			return
+			beego.Debug(err)
 		}
 	}
 
 	countData := []models.TestPingCategoryCount{}
 	if isToday {
 		if _, err := models.GetBaseCategoryCount(o, &countData); err != nil {
-			return
+			beego.Debug(err)
 		}
 	} else {
 		if _, err := models.GetPreviousCategoryCount(o, &countData, date1, date2); err != nil {
-			return
+			beego.Debug(err)
 		}
 	}
 
 	resultData := []models.TestPingResultData{}
 	if _, err := models.GetTestPingResultByDate(o, &resultData, date1, date2); err != nil {
-		return
+		beego.Debug(err)
 	}
 
 	count := make(map[int]int)
@@ -125,20 +125,7 @@ func (this *IpMonitoringController) TestPing() {
 	}
 
 	fmt.Printf("resultData:%d\n", len(resultData))
-	times := [] string{
-		"1830",
-		"1945",
-		"2015",
-		"2130",
-		"2245",
-		"2315",
-		"0030",
-		"0145",
-		"0215",
-		"0330",
-		"0445",
-		"0555",
-	}
+	times := conf.PING_TIME
 
 	this.Data["json"] = &PingData{ Date: date1 , AllData:allData, Count:count, Result:resultData , Times:times ,TestPlanCase:conf.TEST_PLAN_TIME  }
 	this.ServeJSON()

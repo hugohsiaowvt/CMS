@@ -7,7 +7,6 @@ import (
 type TestPingCategory struct {
 	Id			int		`orm:"column(id)"`
 	Category	string	`orm:"column(category)"`
-	Status		int		`orm:"column(status)"`
 }
 
 func (u *TestPingCategory) TableName() string {
@@ -18,7 +17,6 @@ type TestPingItem struct {
 	Id			int		`orm:"column(id)"`
 	CategoryId	int		`orm:"column(category_id)"`
 	Item		string	`orm:"column(item)"`
-	Status		int		`orm:"column(status)"`
 }
 
 func (u *TestPingItem) TableName() string {
