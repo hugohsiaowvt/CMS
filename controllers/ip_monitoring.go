@@ -18,6 +18,7 @@ type MonitoringItem struct {
 	Title 			string `json:"title"`
 	Ip	  			string `json:"ip"`
 	Monitor_group	string `json:"monitor_group"`
+	Action			string `json:"action"`
 }
 
 var Ips []MonitoringItem
@@ -31,7 +32,7 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 	if group=="" || title == "" || ip == "" {
 
 	} else {
-		mystruct := MonitoringItem{ Title:title,Ip:ip,Monitor_group:group}
+		mystruct := MonitoringItem{ Title:title,Ip:ip,Monitor_group:group,Action:"Ping IP"}
 		Ips = append(Ips,mystruct)
 	}
 
@@ -62,7 +63,7 @@ func (this *IpMonitoringController) GetIPList() {
 	Ips = Ips[:0]
 	fmt.Printf("count:%d\n", len(Ips))
 	for _, v := range allData {
-		mystruct := MonitoringItem{ Title:v.Item,Ip:v.Ip,Monitor_group:v.Category}
+		mystruct := MonitoringItem{ Title:v.Item,Ip:v.Ip,Monitor_group:v.Category,Action:"Ping IP"}
 		Ips = append(Ips,mystruct)
 	}
 

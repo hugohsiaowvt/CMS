@@ -54,11 +54,13 @@
                 return;
             var html ="";
             for ( var prop in result) {
-                html += " <tr><td>" +
+                html += " <tr><td class=\"text-center\">" +
                     prop+"</td>" +
-                    "<td>"+result[prop].monitor_group+"</td>" +
-                    "<td>"+result[prop].title+"</td>" +
-                    "<td>"+result[prop].ip+"</td> "+
+                    "<td class=\"text-center\">"+result[prop].monitor_group+"</td>" +
+                    "<td class=\"text-center\">"+result[prop].title+"</td>" +
+                    "<td class=\"text-center\">"+result[prop].ip+"</td> "+
+                    "<td class=\"text-center\">"+result[prop].action+"</td> "+
+                    "<td><div class=\"text-center\"><button type=\"button\" class=\"btn btn-info\" style=\"font-size: 5px\">編輯</button>&nbsp;<button type=\"button\" class=\"btn btn-danger\" style=\"font-size: 5px\">刪除</button>  </div></td>"+
                     "</tr>"
             }
             $("#tbody_datas").html(html);
@@ -78,10 +80,12 @@
         <table class="table table-striped table-sm">
             <thead>
             <tr>
-                <th>#</th>
-                <th>群組</th>
-                <th>測試項目</th>
-                <th>IP</th>
+                <th class="text-center">#</th>
+                <th class="text-center">群組</th>
+                <th style="width:20%" class="text-center">測試項目</th>
+                <th style="width:20%" class="text-center">IP</th>
+                <th class="text-center">操作(Ping / 查表)</th>
+                <th class="text-center">編輯</th>
             </tr>
             </thead>
             <tbody id="tbody_datas">
