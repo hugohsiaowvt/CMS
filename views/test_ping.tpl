@@ -27,12 +27,12 @@
         <h1 class="h2">排程監聽</h1>
 
         <div class="btn-toolbar mb-2 mb-md-0" style="margin-right: 20px">
-            <div class="input-group date form_datetime" data-date="1979-09-16" data-date-format="yyyy-mm-dd">
+            <span style="align-self: center">選擇日期：</span> <div class="input-group date form_datetime" data-date="1979-09-16" data-date-format="yyyy-mm-dd">
                 <input class="form-control" id="date" size="16" type="text" value="">
                 <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                 <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 10px" id="export">修改狀態</button>
         </div>
     </div>
     <div id="main_container"></div>

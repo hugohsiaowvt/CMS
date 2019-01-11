@@ -1,8 +1,10 @@
 (function () {
 
 }())
+var EditMode = false;
 
 $(document).ready(function () {
+    initViewEvent()
     $("#main_container").show();
     $('.form_datetime').datetimepicker({
         format: 'yyyy-mm-dd',
@@ -21,6 +23,18 @@ $(document).ready(function () {
     updatDate();
 })
 
+function initViewEvent() {
+    $("#export").click(function () {
+        $("#main_container").empty();
+        if(EditMode) {
+            EditMode = false;
+            updatDate();
+        }else {
+            EditMode = true;
+            updatDate();
+        }
+    });
+}
 function updatDate() {
     var date = $('#date').val();
     $.ajax({
@@ -46,11 +60,9 @@ function buildDatas(result) {
         var Item = data.Item;
         if (Category!=Group) {
             Group = Category;
-
             var table = '<table class="table table-striped table-sm" id="t'+Group+'"></table>';
             $("#main_container").append('<div style="padding:5px;background:#fafafa;width: 100%;"><h4>'+Group+'</h4></div>').append(table)
             GenerateTestPlan('t'+Group , result.TestPlanCase);
-
         }
         var node = $("#main_container").find("table#t"+Group);
         var nodeId = "tr"+ItemId;
@@ -62,7 +74,9 @@ function buildDatas(result) {
 
     var Date = result.Date;
 }
+function EditStatus(e) {
 
+}
 function GenerateTestPlan(id , cases) {
     var node = $("#main_container").find("table#"+id);
     var caseTitle = '<thead><tr>' +
@@ -78,7 +92,15 @@ function GrenerateRow(id,casetime) {
     var node = ""
     for ( var prop in casetime) {
         var timecase = casetime[prop];
-        node += '<td id="td'+timecase+'">'+"  "+'</td>'
+        if(EditMode) {
+            console.log("Editmode1:"+EditMode);
+           /* node += '<td id="td'+timecase+'">'+'<div id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(\''+timecase+'\')">尚無值</button>'+'</div></td>'*/
+            node += '<td id="td'+timecase+'">'+'<div id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(this)">尚無值</button>'+'</div></td>'
+        }else {
+            console.log("Editmode2:"+EditMode);
+            node += '<td id="td'+timecase+'">'+"  "+'</td>'
+        }
+
     }
     return node;
 }
@@ -89,10 +111,20 @@ function GreneratePingStatus( resultData ) {
         var trID = "tr"+statusItem.ItemId;
         var tdID = "td"+statusItem.Time;
         var status = statusItem.Status;
-        if(status == -1)
-            $("#"+trID+" #"+tdID).text("false").css('color', 'red');
-        else if(status == 1) {
-            $("#"+trID+" #"+tdID).text("true").css('color', 'blue');
+        if(EditMode) {
+            if(status == -1){
+                $("#"+trID+" #"+tdID+" div").attr("data-id",statusItem.ItemId);
+                $("#"+trID+" #"+tdID).find('button').text("異常").attr('class', 'btn btn-outline-danger').attr('data-id',statusItem.ItemId);}
+            else if(status == 1) {
+                $("#"+trID+" #"+tdID).find('button').text("正常").attr('class', 'btn btn-outline-primary').attr('data-id',statusItem.ItemId);
+            }
+        } else {
+            if(status == -1)
+                $("#"+trID+" #"+tdID).text("異常").css('color', 'red');
+            else if(status == 1) {
+                $("#"+trID+" #"+tdID).text("正常").css('color', 'blue');
+            }
         }
+
     }
 }
