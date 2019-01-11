@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"CMS/conf"
 	"CMS/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -29,16 +30,33 @@ func (this *DashBoardController) TestPing() {
 	date2 := now.Format("2006-01-02")
 	beego.Debug(date1, date2)
 
+	isToday := true
+	if !CheckIsToday(date1) {
+		isToday = false
+	}
+
 	o := orm.NewOrm()
 
 	allData := []models.TestPingData{}
-	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
-		return
+	if isToday {
+		if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
+			return
+		}
+	} else {
+		if _, err := models.GetPreviousPingData(o, &allData, date1, date2); err != nil {
+			return
+		}
 	}
 
 	countData := []models.TestPingCategoryCount{}
-	if _, err := models.GetCategoryCount(o, &countData); err != nil {
-		return
+	if isToday {
+		if _, err := models.GetBaseCategoryCount(o, &countData); err != nil {
+			return
+		}
+	} else {
+		if _, err := models.GetPreviousCategoryCount(o, &countData, date1, date2); err != nil {
+			return
+		}
 	}
 
 	resultData := []models.TestPingResultData{}
@@ -55,20 +73,7 @@ func (this *DashBoardController) TestPing() {
 	this.Data["Data"] = allData
 	this.Data["Count"] = count
 	this.Data["Result"] = resultData
-	this.Data["Times"] = [] string{
-		"1830",
-		"1945",
-		"2015",
-		"2130",
-		"2245",
-		"2315",
-		"0030",
-		"0145",
-		"0215",
-		"0330",
-		"0445",
-		"0555",
-	}
+	this.Data["Times"] = conf.PING_TIME
 
 	this.TplName = "test_ping.tpl"
 }

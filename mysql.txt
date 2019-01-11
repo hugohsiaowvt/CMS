@@ -10,11 +10,12 @@ CREATE TABLE `CMS`.`users` (
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`));
 
+INSERT INTO `CMS`.`users` (`account`, `password`, `name`, `email`) VALUES ('root', 'root', 'root', 'root@wvt.com.tw');
+
 
 CREATE TABLE `CMS`.`testpingcategory` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防類別',
-  `status` SMALLINT(6) NOT NULL DEFAULT '1' COMMENT '1:開放\n-1:關閉',
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`));
@@ -27,7 +28,6 @@ CREATE TABLE `CMS`.`testpingitem` (
   `category_id` BIGINT(20) NOT NULL COMMENT '測試高防類別id',
   `title` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防細項',
   `ip` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '測試高防IP',
-  `status` SMALLINT(6) NOT NULL DEFAULT '1' COMMENT '1:開放\n-1:關閉',
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -49,14 +49,15 @@ INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('2', '�
 
 CREATE TABLE `CMS`.`testpingresult` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `category_id` BIGINT(20) NOT NULL COMMENT '測試高防類別id',
   `item_id` BIGINT(20) NOT NULL COMMENT '測試高防細項id',
   `date` VARCHAR(10) NOT NULL DEFAULT '' COMMENT '日期 yyyy-MM-dd',
   `time` VARCHAR(4) NOT NULL DEFAULT '' COMMENT '時間 hhmm',
   `category` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防類別',
   `item` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防細項',
   `ip` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '測試高防IP',
-  `status` SMALLINT(6) NOT NULL DEFAULT '0' COMMENT '1:連線成功\n-1連線失敗',
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  CONSTRAINT `result` UNIQUE (item_id, date, time),
   CONSTRAINT item_id FOREIGN KEY (item_id) REFERENCES `testpingitem`(id));

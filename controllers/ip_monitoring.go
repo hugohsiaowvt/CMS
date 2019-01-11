@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"CMS/conf"
 	"fmt"
 	"CMS/models"
 	"github.com/astaxie/beego"
@@ -54,7 +55,7 @@ type PingData struct {
 func (this *IpMonitoringController) GetIPList() {
 	o := orm.NewOrm()
 	allData := []models.TestPingData{}
-	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
+	if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
 		return
 	}
 	Ips = Ips[:0]
@@ -83,16 +84,34 @@ func (this *IpMonitoringController) TestPing() {
 	date2 := now.Format("2006-01-02")
 	beego.Debug(date1, date2)
 
+	isToday := true
+	if !CheckIsToday(date1) {
+		isToday = false
+	}
+
+
 	o := orm.NewOrm()
 
 	allData := []models.TestPingData{}
-	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
-		return
+	if isToday {
+		if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
+			return
+		}
+	} else {
+		if _, err := models.GetPreviousPingData(o, &allData, date1, date2); err != nil {
+			return
+		}
 	}
 
 	countData := []models.TestPingCategoryCount{}
-	if _, err := models.GetCategoryCount(o, &countData); err != nil {
-		return
+	if isToday {
+		if _, err := models.GetBaseCategoryCount(o, &countData); err != nil {
+			return
+		}
+	} else {
+		if _, err := models.GetPreviousCategoryCount(o, &countData, date1, date2); err != nil {
+			return
+		}
 	}
 
 	resultData := []models.TestPingResultData{}
@@ -121,6 +140,6 @@ func (this *IpMonitoringController) TestPing() {
 		"0555",
 	}
 
-	this.Data["json"] = &PingData{ Date: date1 , AllData:allData, Count:count, Result:resultData , Times:times ,TestPlanCase:models.GetTestPlanTime()  }
+	this.Data["json"] = &PingData{ Date: date1 , AllData:allData, Count:count, Result:resultData , Times:times ,TestPlanCase:conf.TEST_PLAN_TIME  }
 	this.ServeJSON()
 }

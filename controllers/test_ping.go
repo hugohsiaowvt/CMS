@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"CMS/conf"
 	"CMS/models"
 	"CMS/utils"
 	"github.com/astaxie/beego"
@@ -24,7 +25,7 @@ func (this *TestPingController) PingIPs() {
 	o := orm.NewOrm()
 
 	allData := []models.TestPingData{}
-	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
+	if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
 		this.ServeJSON()
 	}
 
@@ -59,16 +60,33 @@ func (this *TestPingController) ReportPingIPs() {
 	date1 := this.GetString("date1")
 	date2 := this.GetString("date2")
 
+	isToday := true
+	if !CheckIsToday(date1) {
+		isToday = false
+	}
+
 	o := orm.NewOrm()
 
 	allData := []models.TestPingData{}
-	if _, err := models.GetAllTestPingData(o, &allData); err != nil {
-		return
+	if isToday {
+		if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
+			return
+		}
+	} else {
+		if _, err := models.GetPreviousPingData(o, &allData, date1, date2); err != nil {
+			return
+		}
 	}
 
 	countData := []models.TestPingCategoryCount{}
-	if _, err := models.GetCategoryCount(o, &countData); err != nil {
-		return
+	if isToday {
+		if _, err := models.GetBaseCategoryCount(o, &countData); err != nil {
+			return
+		}
+	} else {
+		if _, err := models.GetPreviousCategoryCount(o, &countData, date1, date2); err != nil {
+			return
+		}
 	}
 
 	resultData := []models.TestPingResultData{}
@@ -85,20 +103,7 @@ func (this *TestPingController) ReportPingIPs() {
 	this.Data["Data"] = allData
 	this.Data["Count"] = count
 	this.Data["Result"] = resultData
-	this.Data["Times"] = [] string{
-		"1830",
-		"1945",
-		"2015",
-		"2130",
-		"2245",
-		"2315",
-		"0030",
-		"0145",
-		"0215",
-		"0330",
-		"0445",
-		"0555",
-	}
+	this.Data["Times"] = conf.PING_TIME
 
 	this.TplName = "report_ping_ips.tpl"
 }
