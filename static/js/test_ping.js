@@ -4,20 +4,30 @@
 
 $(document).ready(function () {
     $("#main_container").show();
-    var now = new Date();
-    var title = now.format("yyyy-MM-dd");
-    console.log(now);
-    $("#date").val(title)
-    $.ajax({
-        type:'get',
-        url:'/monitoring/ping',
-        data:{
-            "date":"2019-01-09",
-        },
-        success:function(result){
-            buildDatas(result);
-        }
-    })
+
+    $('.form_datetime').datetimepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0,
+        showMeridian: 1,
+        setDate: new Date()
+    }).on('changeDate', function(e) {
+        var date = $('#date').val();
+        $.ajax({
+            type: 'get',
+            url: '/monitoring/ping',
+            data:{
+                "date": date,
+            },
+            success:function(result){
+                buildDatas(result);
+            }
+        })
+    });
+    $('.form_datetime').datetimepicker("setDate", new Date());
 })
 
 function buildDatas(result) {
