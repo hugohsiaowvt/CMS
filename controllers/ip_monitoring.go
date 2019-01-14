@@ -15,29 +15,58 @@ type IpMonitoringController struct {
 }
 
 type MonitoringItem struct {
-	Title 			string `json:"title"`
-	Ip	  			string `json:"ip"`
-	Monitor_group	string `json:"monitor_group"`
-	Action			string `json:"action"`
+	CategoryId    int    `json:"category_id"`
+	Title         string `json:"title"`
+	Ip            string `json:"ip"`
+	Monitor_group string `json:"monitor_group"`
+	Type          int `json:"action"`
 }
 
 var Ips []MonitoringItem
 
 func (this *IpMonitoringController) AddIPMonitoring() {
-	fmt.Printf("test3\n")
-	//TODO 處理寫入DB 後將成功訊息回傳
-	group := this.GetString("group")
+
+	categoryId, _ := this.GetInt("category_id")
 	title := this.GetString("title")
 	ip := this.GetString("ip")
-	if group=="" || title == "" || ip == "" {
+	t, _ := this.GetInt("type")
+
+	res := &ResponseStatus{}
+
+	if ip == "" {
 
 	} else {
-		mystruct := MonitoringItem{ Title:title,Ip:ip,Monitor_group:group,Action:"Ping IP"}
+
+		o := orm.NewOrm()
+
+		categoryData := &models.TestPingCategory{}
+
+		if err := models.GetCategory(o, categoryData, categoryId); err != nil {
+
+		}
+
+		if err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+
+		}
+		mystruct := MonitoringItem{
+			CategoryId:    categoryId,
+			Title:         title,
+			Ip:            ip,
+			Monitor_group: categoryData.Category,
+			Type:          t,
+		}
 		Ips = append(Ips,mystruct)
+
+		res.Status = 1
+		res.Ext = Ips
 	}
 
-	this.Data["json"] = &Ips
+	this.Data["json"] = res
 	this.ServeJSON()
+
+}
+
+func (this *IpMonitoringController) EditIPMonitoring() {
 
 }
 
@@ -63,7 +92,13 @@ func (this *IpMonitoringController) GetIPList() {
 	Ips = Ips[:0]
 	fmt.Printf("count:%d\n", len(Ips))
 	for _, v := range allData {
-		mystruct := MonitoringItem{ Title:v.Item,Ip:v.Ip,Monitor_group:v.Category,Action:"Ping IP"}
+		mystruct := MonitoringItem{
+			CategoryId: v.CategoryId,
+			Title: v.Item,
+			Ip: v.Ip,
+			Monitor_group: v.Category,
+			Type: v.Type,
+		}
 		Ips = append(Ips,mystruct)
 	}
 

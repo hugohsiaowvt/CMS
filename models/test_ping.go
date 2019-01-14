@@ -57,6 +57,10 @@ type TestPingCategoryCount struct {
 	Count		int		`orm:"column(count)"`
 }
 
+func GetCategory(o orm.Ormer, data *TestPingCategory, id int) error {
+	return o.Raw("SELECT * FROM CMS.testpingcategory WHERE id = ?;", id).QueryRow(data)
+}
+
 func GetBaseAllTestPingData(o orm.Ormer, data *[]TestPingData) (int64, error) {
 	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip, ti.type as type FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
 }
@@ -92,12 +96,12 @@ func AddCategory(o orm.Ormer, title string) error {
 	return err
 }
 
-func AddItem(o orm.Ormer, c_id int, title, ip string) error {
-	_, err := o.Raw("INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES (?, ?, ?);", c_id, title, ip).Exec()
+func AddIPMonitoring(o orm.Ormer, c_id int, title, ip string, t int) error {
+	_, err := o.Raw("INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES (?, ?, ?, ?);", c_id, title, ip, t).Exec()
 	return err
 }
 
-func DelItem(o orm.Ormer, id int) error {
+func DelIPMonitoring(o orm.Ormer, id int) error {
 	_, err := o.Raw("DELETE FROM `CMS`.`testpingitem` WHERE `id` = ?;", id).Exec()
 	return err
 }
