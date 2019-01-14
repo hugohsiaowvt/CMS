@@ -2,11 +2,8 @@
 
 }())
 var EditMode = false;
-var TodayDate ;
 
 $(document).ready(function () {
-    TodayDate  = new Date().getMilliseconds();
-    console.log("TodayDate:"+TodayDate)
 
     $("#main_container").show();
     $('.form_datetime').datetimepicker({
@@ -28,6 +25,12 @@ $(document).ready(function () {
 
 function initViewEvent() {
     $("#export").click(function () {
+        var date = $('#date').val();
+        if (!CheckCurrentDate()) {
+            alert("無法修改非當天報表");
+            return
+        }
+
         $("#main_container").empty();
         if(EditMode) {
             EditMode = false;
@@ -37,12 +40,22 @@ function initViewEvent() {
             updatDate();
         }
     });
+
 }
-function updatDate() {
+
+function  CheckCurrentDate(){    //sDate1和sDate2是2002-12-18格式
     var date = $('#date').val();
-/*    var tmp = new Date();
-    var _time = (new Date(date)) - tmp ;*/
-    //console.log("tmp:"+tmp+" date:"+date+ " data:"+_time );
+    var dest_date = new Date(date);
+    var now_date = new Date(convertDateToString (new Date()));
+    return dest_date - now_date < 0 ? false : true;
+}
+
+function updatDate() {
+    if(!CheckCurrentDate())
+        EditMode = false;
+
+    var date = $('#date').val();
+
     $.ajax({
         type: 'get',
         url: '/monitoring/ping',
@@ -103,19 +116,15 @@ function EditStatus(parent_id, e) {
             node.attr("data-status",status);
             break
     }
-    console.log("time:"+e);
+
     var _date = $("#date").val();
     if (e <= 1200) {
         //am 所以加一天
         var date_format = new Date($("#date").val())
         date_format.setDate(date_format.getDate()+1)
-
-        var MM = (date_format.getMonth()+1 < 10 ? "0" :"" )+ (date_format.getMonth()+1);
-        var dd = (date_format.getDate() < 10 ? "0" :"") + date_format.getDate();
-        _date = date_format.getFullYear()+"-"+MM+"-"+dd;
-
+        _date = convertDateToString(date_format);
     }
-    console.log("_date:"+_date);
+
     var data = {
         "result_id":resultID,
         "item_id":parent_id,
@@ -124,6 +133,12 @@ function EditStatus(parent_id, e) {
         "status" : status,
     }
     ModifyStatus(url,data);
+}
+
+function convertDateToString (date) {
+    var MM = (date.getMonth()+1 < 10 ? "0" :"" )+ (date.getMonth()+1);
+    var dd = (date.getDate() < 10 ? "0" :"") + date.getDate();
+    return date.getFullYear()+"-"+MM+"-"+dd;
 }
 
 function ModifyStatus(url,data) {
@@ -135,6 +150,8 @@ function ModifyStatus(url,data) {
         success:function(result){
             var response_status = result.Status;
             var msg = result.Msg;
+            if(response_status<0)
+                alert(msg)
             console.log("response_status:"+response_status+" msg:"+msg)
         }
     })
