@@ -62,7 +62,7 @@ func GetCategory(o orm.Ormer, data *TestPingCategory, id int) error {
 }
 
 func GetBaseAllTestPingData(o orm.Ormer, data *[]TestPingData) (int64, error) {
-	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip, ti.type as type FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
+	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip, ti.type as type FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY tc.id, ti.id;").QueryRows(data)
 }
 
 func GetBaseCategoryCount(o orm.Ormer, data *[]TestPingCategoryCount) (int64, error) {
