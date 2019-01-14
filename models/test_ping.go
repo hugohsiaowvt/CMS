@@ -18,10 +18,26 @@ type TestPingItem struct {
 	CategoryId	int		`orm:"column(category_id)"`
 	Item		string	`orm:"column(item)"`
 	Ip			string	`orm:"column(ip)"`
+	Type		int		`orm:"column(type)"`
 }
 
 func (u *TestPingItem) TableName() string {
 	return "testpingitem"
+}
+
+type TestPingResultData struct {
+	Id			int    `orm:"column(result_id)"`
+	ItemId		int    `orm:"column(item_id)"`
+	Date		string	`orm:"column(date)"`
+	Time		string	`orm:"column(time)"`
+	Category	string	`orm:"column(category)"`
+	Item		string	`orm:"column(item)"`
+	Ip			string	`orm:"column(ip)"`
+	Status		int    `orm:"column(status)"`
+}
+
+func (u *TestPingResultData) TableName() string {
+	return "testpingresult"
 }
 
 type TestPingData struct {
@@ -32,11 +48,8 @@ type TestPingData struct {
 	Category	string	`orm:"column(category)"`
 	Item		string	`orm:"column(item)"`
 	Ip			string	`orm:"column(ip)"`
+	Type		int		`orm:"column(type)"`
 	Status		int		`orm:"column(status)"`
-}
-
-func (u *TestPingData) TableName() string {
-	return "testpingresult"
 }
 
 type TestPingCategoryCount struct {
@@ -44,15 +57,8 @@ type TestPingCategoryCount struct {
 	Count		int		`orm:"column(count)"`
 }
 
-type TestPingResultData struct {
-	ItemId		int		`orm:"column(item_id)"`
-	ResultId	int		`orm:"column(result_id)"`
-	Time		string	`orm:"column(time)"`
-	Status		int		`orm:"column(status)"`
-}
-
 func GetBaseAllTestPingData(o orm.Ormer, data *[]TestPingData) (int64, error) {
-	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
+	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip, ti.type as type FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY ti.id;").QueryRows(data)
 }
 
 func GetBaseCategoryCount(o orm.Ormer, data *[]TestPingCategoryCount) (int64, error) {
