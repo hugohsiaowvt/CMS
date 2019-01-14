@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+type ResponseStatus struct {
+	Status int
+	Ext	   interface{}
+	Msg	   string
+}
+
 func CheckIsToday(date string) bool {
 	// 判斷是否為今天報表
 	// 1.如果日期是昨天而且今天的時間大於0600就不是今日報表

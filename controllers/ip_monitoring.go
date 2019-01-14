@@ -140,10 +140,12 @@ func (this *IpMonitoringController) AddPingResult() {
 	time := this.GetString("time")
 	status, _ := strconv.Atoi(this.GetString("status"))
 
+	res := &ResponseStatus{}
+
 	var categoryId int
 	var category, item, ip string
 
-	this.Data["json"] = 0
+	res.Status = -1
 
 	if isToday := CheckIsToday(date); isToday {
 
@@ -152,6 +154,7 @@ func (this *IpMonitoringController) AddPingResult() {
 		allData := []models.TestPingData{}
 		if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
 			beego.Debug(err)
+			res.Msg = "資料庫錯誤！"
 		}
 
 		for _, v := range allData {
@@ -165,11 +168,15 @@ func (this *IpMonitoringController) AddPingResult() {
 
 		if err := models.AddPingResult(o, categoryId, itemId, status, date, time, category, item, ip); err != nil {
 			beego.Debug(err)
+			res.Msg = "資料庫錯誤！"
 		} else {
-			this.Data["json"] = 1
+			res.Status = 1
 		}
+	} else {
+		res.Msg = "無法新增非當天報表資料！"
 	}
-
+	fmt.Print(res)
+	this.Data["json"] = res
 	this.ServeJSON()
 
 }
@@ -179,7 +186,8 @@ func (this *IpMonitoringController) EditPingResult() {
 	id, _ := strconv.Atoi(this.GetString("result_id"))
 	status, _ := strconv.Atoi(this.GetString("status"))
 
-	this.Data["json"] = 0
+	res := &ResponseStatus{}
+	res.Status = -1
 
 	o := orm.NewOrm()
 
@@ -187,20 +195,22 @@ func (this *IpMonitoringController) EditPingResult() {
 
 	if err := models.GetPingResult(o, result, id); err != nil {
 		beego.Debug(err)
+		res.Msg = "資料庫錯誤！"
 	} else {
 		date := result.Date
 		if isToday := CheckIsToday(date); isToday {
 			if err := models.EditPingResult(o, id, status); err != nil {
 				beego.Debug(err)
+				res.Msg = "資料庫錯誤！"
 			} else {
-				this.Data["json"] = 1
+				res.Status = 1
 			}
 		} else {
 			// 非當日
-			this.Data["json"] = -1
+			res.Msg = "無法修改非當天報表資料！"
 		}
 	}
-
+	this.Data["json"] = res
 	this.ServeJSON()
 
 }

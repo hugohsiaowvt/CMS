@@ -115,7 +115,9 @@ function ModifyStatus(url,data) {
         url: url,
         data:data,
         success:function(result){
-            //console.log(result)
+            var response_status = result.Status;
+            var msg = result.Msg;
+            console.log("response_status:"+response_status+" msg:"+msg)
         }
     })
 }
