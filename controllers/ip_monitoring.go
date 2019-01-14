@@ -176,7 +176,7 @@ func (this *IpMonitoringController) AddPingResult() {
 
 func (this *IpMonitoringController) EditPingResult() {
 
-	id, _ := strconv.Atoi(this.GetString("id"))
+	id, _ := strconv.Atoi(this.GetString("result_id"))
 	status, _ := strconv.Atoi(this.GetString("status"))
 
 	this.Data["json"] = 0

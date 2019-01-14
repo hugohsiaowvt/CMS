@@ -97,7 +97,9 @@ function EditStatus(parent_id, e) {
             node.attr("data-status",status);
             break
     }
+
     var data = {
+        "result_id":resultID,
         "item_id":parent_id,
         "date":$("#date").val(),
         "time":e,
@@ -107,13 +109,13 @@ function EditStatus(parent_id, e) {
 }
 
 function ModifyStatus(url,data) {
-    console.log(url,data);
+
     $.ajax({
         type: 'get',
         url: url,
         data:data,
         success:function(result){
-            console.log(result)
+            //console.log(result)
         }
     })
 }
