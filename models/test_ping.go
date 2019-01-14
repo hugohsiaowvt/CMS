@@ -102,6 +102,11 @@ func AddIPMonitoring(o orm.Ormer, c_id int, title, ip string, t int) (int64, err
 	return id, err
 }
 
+func EditIPMonitoring(o orm.Ormer, id int64, c_id, t int, title, ip string) error {
+	_, err := o.Raw("UPDATE `CMS`.`testpingitem` SET `category_id`=?, `title`=?, `ip`=?, `type`=? WHERE `id`=?;", c_id, title, ip, t, id).Exec()
+	return err
+}
+
 func DelIPMonitoring(o orm.Ormer, id int) error {
 	_, err := o.Raw("DELETE FROM `CMS`.`testpingitem` WHERE `id` = ?;", id).Exec()
 	return err

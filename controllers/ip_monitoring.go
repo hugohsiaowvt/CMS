@@ -44,10 +44,51 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 		categoryData := &models.TestPingCategory{}
 
 		if err := models.GetCategory(o, categoryData, categoryId); err != nil {
+			res.Msg = "資料庫錯誤！"
+		} else {
+			if id, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+				res.Msg = "資料庫錯誤！"
+			} else {
+				mystruct := MonitoringItem{
+					CategoryId:    categoryId,
+					Id:            id,
+					Title:         title,
+					Ip:            ip,
+					Monitor_group: categoryData.Category,
+					Type:          t,
+				}
+				Ips = append(Ips,mystruct)
 
+				res.Status = 1
+				res.Ext = Ips
+			}
 		}
+	}
 
-		if id, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+	this.Data["json"] = res
+	this.ServeJSON()
+
+}
+
+func (this *IpMonitoringController) EditIPMonitoring() {
+
+	id, _ := this.GetInt64("id")
+	categoryId, _ := this.GetInt("category_id")
+	title := this.GetString("title")
+	ip := this.GetString("ip")
+	t, _ := this.GetInt("type")
+
+	res := &ResponseStatus{}
+	res.Status = -1
+
+	o := orm.NewOrm()
+
+	categoryData := &models.TestPingCategory{}
+
+	if err := models.GetCategory(o, categoryData, categoryId); err != nil {
+		res.Msg = "資料庫錯誤！"
+	} else {
+		if err := models.EditIPMonitoring(o, id, categoryId, t, title, ip); err != nil {
 			res.Msg = "資料庫錯誤！"
 		} else {
 			mystruct := MonitoringItem{
@@ -63,17 +104,11 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 			res.Status = 1
 			res.Ext = Ips
 		}
-
-
 	}
 
 	this.Data["json"] = res
 	this.ServeJSON()
 
-}
-
-func (this *IpMonitoringController) EditIPMonitoring() {
-	
 }
 
 func (this *IpMonitoringController) DelIPMonitoring() {
