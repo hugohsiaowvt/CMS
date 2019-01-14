@@ -2,9 +2,12 @@
 
 }())
 var EditMode = false;
+var TodayDate ;
 
 $(document).ready(function () {
-    initViewEvent()
+    TodayDate  = new Date().getMilliseconds();
+    console.log("TodayDate:"+TodayDate)
+
     $("#main_container").show();
     $('.form_datetime').datetimepicker({
         format: 'yyyy-mm-dd',
@@ -15,10 +18,10 @@ $(document).ready(function () {
         forceParse: 0,
         showMeridian: 1,
     }).on('changeDate', function(e) {
-        var date = $('#date').val();
         $("#main_container").empty();
         updatDate();
     });
+    initViewEvent()
     $('.form_datetime').datetimepicker("setDate", new Date());
     updatDate();
 })
@@ -37,6 +40,9 @@ function initViewEvent() {
 }
 function updatDate() {
     var date = $('#date').val();
+/*    var tmp = new Date();
+    var _time = (new Date(date)) - tmp ;*/
+    //console.log("tmp:"+tmp+" date:"+date+ " data:"+_time );
     $.ajax({
         type: 'get',
         url: '/monitoring/ping',
@@ -97,11 +103,23 @@ function EditStatus(parent_id, e) {
             node.attr("data-status",status);
             break
     }
+    console.log("time:"+e);
+    var _date = $("#date").val();
+    if (e <= 1200) {
+        //am 所以加一天
+        var date_format = new Date($("#date").val())
+        date_format.setDate(date_format.getDate()+1)
 
+        var MM = (date_format.getMonth()+1 < 10 ? "0" :"" )+ (date_format.getMonth()+1);
+        var dd = (date_format.getDate() < 10 ? "0" :"") + date_format.getDate();
+        _date = date_format.getFullYear()+"-"+MM+"-"+dd;
+
+    }
+    console.log("_date:"+_date);
     var data = {
         "result_id":resultID,
         "item_id":parent_id,
-        "date":$("#date").val(),
+        "date":_date,
         "time":e,
         "status" : status,
     }
