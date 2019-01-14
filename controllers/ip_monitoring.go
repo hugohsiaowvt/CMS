@@ -15,11 +15,12 @@ type IpMonitoringController struct {
 }
 
 type MonitoringItem struct {
-	CategoryId    int    `json:"category_id"`
-	Title         string `json:"title"`
-	Ip            string `json:"ip"`
-	Monitor_group string `json:"monitor_group"`
-	Type          int `json:"action"`
+	CategoryId    int		`json:"category_id"`
+	Id            int64		`json:"id"`
+	Title         string	`json:"title"`
+	Ip            string	`json:"ip"`
+	Monitor_group string	`json:"monitor_group"`
+	Type          int		`json:"action"`
 }
 
 var Ips []MonitoringItem
@@ -32,6 +33,7 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 	t, _ := this.GetInt("type")
 
 	res := &ResponseStatus{}
+	res.Status = -1
 
 	if ip == "" {
 
@@ -45,20 +47,24 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 
 		}
 
-		if err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+		if id, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+			res.Msg = "資料庫錯誤！"
+		} else {
+			mystruct := MonitoringItem{
+				CategoryId:    categoryId,
+				Id:            id,
+				Title:         title,
+				Ip:            ip,
+				Monitor_group: categoryData.Category,
+				Type:          t,
+			}
+			Ips = append(Ips,mystruct)
 
+			res.Status = 1
+			res.Ext = Ips
 		}
-		mystruct := MonitoringItem{
-			CategoryId:    categoryId,
-			Title:         title,
-			Ip:            ip,
-			Monitor_group: categoryData.Category,
-			Type:          t,
-		}
-		Ips = append(Ips,mystruct)
 
-		res.Status = 1
-		res.Ext = Ips
+
 	}
 
 	this.Data["json"] = res
@@ -67,10 +73,27 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 }
 
 func (this *IpMonitoringController) EditIPMonitoring() {
-
+	
 }
 
 func (this *IpMonitoringController) DelIPMonitoring() {
+
+	categoryId, _ := this.GetInt("category_id")
+
+	res := &ResponseStatus{}
+	res.Status = -1
+
+	o := orm.NewOrm()
+
+	if err := models.DelIPMonitoring(o, categoryId); err != nil {
+		res.Msg = "資料庫錯誤！"
+	} else {
+		res.Status = 1
+		res.Ext = categoryId
+	}
+
+	this.Data["json"] = res
+	this.ServeJSON()
 
 }
 
