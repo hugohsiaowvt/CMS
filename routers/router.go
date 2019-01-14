@@ -34,7 +34,7 @@ var FilterUser = func(ctx *context.Context) {
 	if !ok && ctx.Request.RequestURI != "/" {
 		// api和報表不用登入就可以呼叫
 		if string(ctx.Request.RequestURI[0:4]) != "/api" && string(ctx.Request.RequestURI[0:7]) != "/report" {
-			ctx.Redirect(302, "")
+			ctx.Redirect(302, "/")
 		}
 	}
 }

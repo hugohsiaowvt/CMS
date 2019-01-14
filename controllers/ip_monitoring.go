@@ -176,4 +176,31 @@ func (this *IpMonitoringController) AddPingResult() {
 
 func (this *IpMonitoringController) EditPingResult() {
 
+	id, _ := strconv.Atoi(this.GetString("id"))
+	status, _ := strconv.Atoi(this.GetString("status"))
+
+	this.Data["json"] = 0
+
+	o := orm.NewOrm()
+
+	result := &models.TestPingData{}
+
+	if err := models.GetPingResult(o, result, id); err != nil {
+		beego.Debug(err)
+	} else {
+		date := result.Date
+		if isToday := CheckIsToday(date); isToday {
+			if err := models.EditPingResult(o, id, status); err != nil {
+				beego.Debug(err)
+			} else {
+				this.Data["json"] = 1
+			}
+		} else {
+			// 非當日
+			this.Data["json"] = -1
+		}
+	}
+
+	this.ServeJSON()
+
 }

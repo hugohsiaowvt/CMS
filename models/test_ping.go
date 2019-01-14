@@ -17,20 +17,26 @@ type TestPingItem struct {
 	Id			int		`orm:"column(id)"`
 	CategoryId	int		`orm:"column(category_id)"`
 	Item		string	`orm:"column(item)"`
+	Ip			string	`orm:"column(ip)"`
 }
 
 func (u *TestPingItem) TableName() string {
 	return "testpingitem"
 }
 
-
-
 type TestPingData struct {
 	CategoryId	int		`orm:"column(category_id)"`
 	ItemId		int		`orm:"column(item_id)"`
+	Date		string	`orm:"column(date)"`
+	Time		string	`orm:"column(time)"`
 	Category	string	`orm:"column(category)"`
 	Item		string	`orm:"column(item)"`
 	Ip			string	`orm:"column(ip)"`
+	Status		int		`orm:"column(status)"`
+}
+
+func (u *TestPingData) TableName() string {
+	return "testpingresult"
 }
 
 type TestPingCategoryCount struct {
@@ -65,6 +71,10 @@ func GetPreviousCategoryCount(o orm.Ormer, data *[]TestPingCategoryCount, date1,
 	return o.Raw("SELECT category_id AS id, count(distinct item) FROM CMS.testpingresult WHERE (date = ? AND time >= '0600') OR (date = ? AND time < '0600') GROUP BY category_id;", date1, date2).QueryRows(data)
 }
 
+func GetPingResult(o orm.Ormer, data *TestPingData, id int) error {
+	return o.Raw("SELECT * FROM CMS.testpingresult WHERE id = ?;", id).QueryRow(data)
+}
+
 func InsertTestPingResult(o orm.Ormer, data TestPingData, date, time string, status int) error {
 	_, err := o.Raw("INSERT INTO `CMS`.`testpingresult` (`category_id`, `item_id`, `date`, `time`, `category`, `item`, `ip`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
 		data.CategoryId, data.ItemId, date, time, data.Category, data.Item, data.Ip, status).Exec()
@@ -89,5 +99,10 @@ func DelItem(o orm.Ormer, id int) error {
 func AddPingResult(o orm.Ormer, categoryId, itemId, status int, date, time, category, item, ip string) error {
 	_, err := o.Raw("INSERT INTO `CMS`.`testpingresult` (`category_id`, `item_id`, `date`, `time`, `category`, `item`, `ip`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
 		categoryId, itemId, date, time, category, item, ip, status).Exec()
+	return err
+}
+
+func EditPingResult(o orm.Ormer, id, status int) error {
+	_, err := o.Raw("UPDATE `CMS`.`testpingresult` SET `status` = ?  WHERE `id` = ?;", status, id).Exec()
 	return err
 }
