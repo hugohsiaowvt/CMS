@@ -44,10 +44,10 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 		categoryData := &models.TestPingCategory{}
 
 		if err := models.GetCategory(o, categoryData, categoryId); err != nil {
-			res.Msg = "資料庫錯誤！"
+			res.Msg = "資料庫錯誤1！"
 		} else {
 			if id, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
-				res.Msg = "資料庫錯誤！"
+				res.Msg = "資料庫錯誤2！"
 			} else {
 				mystruct := MonitoringItem{
 					CategoryId:    categoryId,
