@@ -8,7 +8,6 @@
     <script type="text/javascript" src="/static/easyui/jquery.min.js"></script>
     <script type="text/javascript" src="/static/easyui/jquery.easyui.min.js"></script>
 
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
     <script src="/static/js/ip_monitoring.js"></script>
 </head>
 <div id="main_container" style="display: none;" align="left">
