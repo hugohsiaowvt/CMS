@@ -23,8 +23,6 @@ type MonitoringItem struct {
 	Type          int		`json:"action"`
 }
 
-var Ips []MonitoringItem
-
 func (this *IpMonitoringController) AddIPMonitoring() {
 
 	categoryId, _ := this.GetInt("category_id")
@@ -92,18 +90,17 @@ func (this *IpMonitoringController) EditIPMonitoring() {
 
 func (this *IpMonitoringController) DelIPMonitoring() {
 
-	categoryId, _ := this.GetInt("category_id")
+	id, _ := this.GetInt("id")
 
 	res := &ResponseStatus{}
 	res.Status = -1
 
 	o := orm.NewOrm()
 
-	if err := models.DelIPMonitoring(o, categoryId); err != nil {
+	if err := models.DelIPMonitoring(o, id); err != nil {
 		res.Msg = "資料庫錯誤！"
 	} else {
 		res.Status = 1
-		res.Ext = categoryId
 	}
 
 	this.Data["json"] = res
@@ -121,16 +118,21 @@ type PingData struct {
 }
 
 func (this *IpMonitoringController) GetIPList() {
+
+	var Ips []MonitoringItem
+
 	o := orm.NewOrm()
+
 	allData := []models.TestPingData{}
 	if _, err := models.GetBaseAllTestPingData(o, &allData); err != nil {
 		return
 	}
-	Ips = Ips[:0]
+
 	fmt.Printf("count:%d\n", len(Ips))
 	for _, v := range allData {
 		mystruct := MonitoringItem{
 			CategoryId: v.CategoryId,
+			Id: v.ItemId,
 			Title: v.Item,
 			Ip: v.Ip,
 			Monitor_group: v.Category,
@@ -207,10 +209,10 @@ func (this *IpMonitoringController) TestPing() {
 
 func (this *IpMonitoringController) AddPingResult() {
 
-	itemId, _ := strconv.Atoi(this.GetString("item_id"))
+	itemId, _ := this.GetInt64("item_id")
 	date := this.GetString("date")
 	time := this.GetString("time")
-	status, _ := strconv.Atoi(this.GetString("status"))
+	status, _ := this.GetInt("status")
 
 	res := &ResponseStatus{}
 
@@ -238,7 +240,7 @@ func (this *IpMonitoringController) AddPingResult() {
 			}
 		}
 
-		if err := models.AddPingResult(o, categoryId, itemId, status, date, time, category, item, ip); err != nil {
+		if err := models.AddPingResult(o, categoryId, status, itemId, date, time, category, item, ip); err != nil {
 			beego.Debug(err)
 			res.Msg = "資料庫錯誤！"
 		} else {

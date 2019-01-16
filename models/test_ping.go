@@ -42,7 +42,7 @@ func (u *TestPingResultData) TableName() string {
 
 type TestPingData struct {
 	CategoryId	int		`orm:"column(category_id)"`
-	ItemId		int		`orm:"column(item_id)"`
+	ItemId		int64	`orm:"column(item_id)"`
 	Date		string	`orm:"column(date)"`
 	Time		string	`orm:"column(time)"`
 	Category	string	`orm:"column(category)"`
@@ -112,7 +112,7 @@ func DelIPMonitoring(o orm.Ormer, id int) error {
 	return err
 }
 
-func AddPingResult(o orm.Ormer, categoryId, itemId, status int, date, time, category, item, ip string) error {
+func AddPingResult(o orm.Ormer, categoryId, status int, itemId int64, date, time, category, item, ip string) error {
 	_, err := o.Raw("INSERT INTO `CMS`.`testpingresult` (`category_id`, `item_id`, `date`, `time`, `category`, `item`, `ip`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
 		categoryId, itemId, date, time, category, item, ip, status).Exec()
 	return err
