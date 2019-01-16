@@ -91,17 +91,19 @@ function edit(prop) {
         root.find("button.btn.btn-outline-secondary").off('click')
         root.find("button.btn.btn-warning").text("編輯").attr("class","btn btn-info");
 
+        var id = prop;
         var category_id = root.find("#d_category_id").attr("data-category");
         var title= root.find("#title").val();
         var ip=root.find("#ip").val();
         var type=root.find("#btn_type").val();
 
-        console.log("category_id:"+category_id+" title:"+title+" ip:"+ip+" type:"+type);
+        console.log("category_id:"+category_id+" title:"+title+" ip:"+ip+" type:"+type +" id:"+id);
 
         $.ajax({
             type: 'get',
-            url: '/monitoring/add',
+            url: '/monitoring/edit',
             data:{
+                "id": id,
                 "category_id":category_id,
                 "title":title,
                 "ip":ip,

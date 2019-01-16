@@ -46,21 +46,10 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 		if err := models.GetCategory(o, categoryData, categoryId); err != nil {
 			res.Msg = "資料庫錯誤1！"
 		} else {
-			if id, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+			if _, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
 				res.Msg = "資料庫錯誤2！"
 			} else {
-				mystruct := MonitoringItem{
-					CategoryId:    categoryId,
-					Id:            id,
-					Title:         title,
-					Ip:            ip,
-					Monitor_group: categoryData.Category,
-					Type:          t,
-				}
-				Ips = append(Ips,mystruct)
-
 				res.Status = 1
-				res.Ext = Ips
 			}
 		}
 	}
@@ -88,21 +77,11 @@ func (this *IpMonitoringController) EditIPMonitoring() {
 	if err := models.GetCategory(o, categoryData, categoryId); err != nil {
 		res.Msg = "資料庫錯誤！"
 	} else {
+		fmt.Print("test1")
 		if err := models.EditIPMonitoring(o, id, categoryId, t, title, ip); err != nil {
 			res.Msg = "資料庫錯誤！"
 		} else {
-			mystruct := MonitoringItem{
-				CategoryId:    categoryId,
-				Id:            id,
-				Title:         title,
-				Ip:            ip,
-				Monitor_group: categoryData.Category,
-				Type:          t,
-			}
-			Ips = append(Ips,mystruct)
-
 			res.Status = 1
-			res.Ext = Ips
 		}
 	}
 
