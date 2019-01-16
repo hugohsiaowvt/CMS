@@ -44,10 +44,10 @@ function buildDatas(result) {
         return;
     var html ="";
     for ( var prop in result) {
-        var action = result[prop].action == 1 ? "查表1" : "Ping IP";
+        var action = result[prop].action == 1 ? "Ping IP" : "查表1";
         html += " <tr id='tr_"+prop+"'>" +
             "<td class=\"text-center\"><div id='d_category_id' data-category=\""+result[prop].category_id+"\"></div>" +
-            prop+"</td>" +
+            (parseInt(prop)+1)+"</td>" +
             "<td class=\"text-center\">"+result[prop].monitor_group+"</td>" +
             "<td class=\"text-center\"><input id=\"title\" type=\"text\" value=\""+result[prop].title+"\" style=\"display: none ; text-align: center\"><span>"+result[prop].title+"</span></td>" +
             "<td class=\"text-center\"><input id=\"ip\" type=\"text\" value=\""+result[prop].ip+"\" style=\"display: none ; text-align: center\"><span>"+result[prop].ip+"</span></td>" +
@@ -75,10 +75,10 @@ function edit(prop) {
             console.log("prop:"+$(this).val());
             if ($(this).val() == 1) {
                 $(this).val(2);
-                $(this).text("Ping IP");
+                $(this).text("查表");
             } else {
                 $(this).val(1);
-                $(this).text("查表");
+                $(this).text("Ping IP");
             }
 
         });
@@ -103,7 +103,7 @@ function edit(prop) {
             type: 'get',
             url: '/monitoring/edit',
             data:{
-                "id": id,
+                "id": id + 1,
                 "category_id":category_id,
                 "title":title,
                 "ip":ip,
