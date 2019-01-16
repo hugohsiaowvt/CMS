@@ -4,14 +4,28 @@ import (
 	"CMS/conf"
 	"CMS/models"
 	"CMS/utils"
+	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"io/ioutil"
+	"net/http"
 	"sync"
 	"time"
 )
 
 type TestPingController struct {
 	beego.Controller
+}
+
+type CentralData struct {
+	Code	int		`json:"code"`
+	Ttl		int 	`json:""ttl`
+	Data	Data	`json:""data`
+}
+
+type Data struct {
+	ProxySet	[]string	`json:"ProxySet"`
 }
 
 var waitGroup = new(sync.WaitGroup)
@@ -22,6 +36,22 @@ func (this *TestPingController) PingIPs() {
 	t := time.Now().Local()
 	date := t.Format("2006-01-02")
 
+	// 先去查防打ip列表
+	defendIps := []string{}
+	response, err := http.Get("http://central.vvchat.im:8012/api/v1/debuginfo")
+	if err != nil {
+		fmt.Printf("%s", err)
+	} else {
+		defer response.Body.Close()
+		contents, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			fmt.Printf("%s", err)
+		}
+		dat := &CentralData{}
+		json.Unmarshal(contents, dat)
+		defendIps = dat.Data.ProxySet
+	}
+
 	o := orm.NewOrm()
 
 	allData := []models.TestPingData{}
@@ -31,7 +61,12 @@ func (this *TestPingController) PingIPs() {
 
 	for _, v := range allData {
 		waitGroup.Add(1)
-		go ping(v, date, recordTime)
+		switch v.Type {
+		case 1:
+			go ping(v, date, recordTime)
+		case 2:
+			go comparison(defendIps, v, date, recordTime)
+		}
 	}
 
 	waitGroup.Wait()
@@ -44,6 +79,26 @@ func ping(data models.TestPingData, date, recordTime string) {
 	status := -1
 	for i := 0; i < 5; i++ {
 		if alive := utils.Ping(data.Ip); alive {
+			status = 1
+		}
+	}
+
+	if err := models.InsertTestPingResult(o, data, date, recordTime, status); err != nil {
+
+	}
+
+	waitGroup.Done()
+}
+
+func comparison(ips []string, data models.TestPingData, date, recordTime string) {
+
+	beego.Debug(data.Ip)
+
+	o := orm.NewOrm()
+	status := -1
+
+	for _, v := range ips {
+		if v == data.Ip {
 			status = 1
 		}
 	}

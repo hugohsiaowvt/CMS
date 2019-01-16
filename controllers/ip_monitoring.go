@@ -158,7 +158,6 @@ func (this *IpMonitoringController) TestPing() {
 	nextDay, _ := time.ParseDuration("24h")
 	now = now.Add(nextDay)
 	date2 := now.Format("2006-01-02")
-	beego.Debug(date1, date2)
 
 	isToday := true
 	if !CheckIsToday(date1) {

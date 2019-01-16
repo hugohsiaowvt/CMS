@@ -45,7 +45,7 @@ function buildDatas(result) {
     var html ="";
     for ( var prop in result) {
         var id = result[prop].id;
-        var action = result[prop].action == 1 ? "Ping IP" : "查表1";
+        var action = result[prop].action == 1 ? "Ping IP" : "查表";
         html += " <tr id='tr_"+prop+"'>" +
             "<td class=\"text-center\"><div id='d_category_id' data-category=\""+result[prop].category_id+"\"></div>" +
             (parseInt(prop)+1)+"</td>" +

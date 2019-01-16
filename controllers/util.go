@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
 	"time"
 )
 
@@ -20,8 +19,6 @@ func CheckIsToday(date string) bool {
 	tmpDay := t.Add(subDay)
 	yesterDay := tmpDay.Format("2006-01-02")
 	nowTime := t.Format("1504")
-
-	beego.Debug(date, yesterDay, nowTime)
 
 	isToday := true
 	if date == yesterDay && nowTime > "0600" || date < yesterDay {
