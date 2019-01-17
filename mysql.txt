@@ -34,18 +34,18 @@ CREATE TABLE `CMS`.`testpingitem` (
   PRIMARY KEY (`id`),
   CONSTRAINT cate_id FOREIGN KEY (category_id) REFERENCES `testpingcategory`(id));
 
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_1 119.188.210.1', '119.188.210.1');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_2 119.188.210.17', '119.188.210.17');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_3 119.188.210.8', '119.188.210.8');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_4 119.188.210.20', '119.188.210.20');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_5 119.188.210.10', '119.188.210.10');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_6 119.188.210.23', '119.188.210.23');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_7 119.188.210.12', '119.188.210.12');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_8 119.188.210.13', '119.188.210.13');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_9 119.188.210.14', '119.188.210.14');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('1', '高防400G_10 119.188.210.28', '119.188.210.28');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('2', '高防800G_1 123.129.198.5', '123.129.198.5');
-INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`) VALUES ('2', '高防800G_2 123.129.198.6', '123.129.198.6');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_1 119.188.210.1', '119.188.210.1', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_2 119.188.210.17', '119.188.210.17', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_3 119.188.210.8', '119.188.210.8', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_4 119.188.210.20', '119.188.210.20', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_5 119.188.210.10', '119.188.210.10', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_6 119.188.210.23', '119.188.210.23', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_7 119.188.210.12', '119.188.210.12', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_8 119.188.210.13', '119.188.210.13', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_9 119.188.210.14', '119.188.210.14', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_10 119.188.210.28', '119.188.210.28', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('2', '高防800G_1 123.129.198.5', '123.129.198.5', '2');
+INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('2', '高防800G_2 123.129.198.6', '123.129.198.6', '2');
 
 
 CREATE TABLE `CMS`.`testpingresult` (
@@ -63,3 +63,54 @@ CREATE TABLE `CMS`.`testpingresult` (
   PRIMARY KEY (`id`),
   CONSTRAINT `result` UNIQUE (item_id, date, time),
   CONSTRAINT item_id FOREIGN KEY (item_id) REFERENCES `testpingitem`(id));
+
+CREATE TABLE `CMS`.`reportcategory` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '監控高防類別',
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`));
+
+INSERT INTO `CMS`.`reportcategory` (`title`) VALUES ('扛打情況');
+INSERT INTO `CMS`.`reportcategory` (`title`) VALUES ('IM系統測試');
+INSERT INTO `CMS`.`reportcategory` (`title`) VALUES ('遊戲測試');
+
+CREATE TABLE `CMS`.`reportitem` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `category_id` BIGINT(20) NOT NULL COMMENT '監控高防類別id',
+  `title` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '監控高防細項',
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT report_cate_id FOREIGN KEY (category_id) REFERENCES `reportcategory`(id));
+
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('1', '攻擊情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('1', '扛打擊器調度情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('1', '機器存活及死亡情況');
+
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('2', 'HugoGram和VCtalk&旺聊訊息發送及接收');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('2', 'VCtalk網頁情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('2', 'HugoGram和VCtalk&旺聊支付及轉帳功能情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('2', '語音功能情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('2', '版本升級情況');
+
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('3', '下載安裝測試情況 (Android系統)');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('3', '下載安裝測試情況 (IOS系統)');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('3', '連線測試情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('3', '支付測試情況');
+INSERT INTO `CMS`.`reportitem` (`category_id`, `title`) VALUES ('3', 'Bug測試情況');
+
+CREATE TABLE `CMS`.`reportresult` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `category_id` BIGINT(20) NOT NULL COMMENT '監控高防類別id',
+  `item_id` BIGINT(20) NOT NULL COMMENT '監控高防細項id',
+  `category` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防類別',
+  `item` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防細項',
+  `date` VARCHAR(10) NOT NULL DEFAULT '' COMMENT '日期 yyyy-MM-dd',
+  `note` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '監控高防記錄',
+  `remark` VARCHAR(1024) NOT NULL DEFAULT '' COMMENT '監控高防備註',
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `result` UNIQUE (item_id, date),
+  CONSTRAINT report_item_id FOREIGN KEY (item_id) REFERENCES `reportitem`(id));

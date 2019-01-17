@@ -5,8 +5,8 @@ import (
 )
 
 type TestPingCategory struct {
-	Id			int		`orm:"column(id)"`
-	Category	string	`orm:"column(category)"`
+	Id			int    `orm:"column(id)"`
+	Title		string `orm:"column(title)"`
 }
 
 func (u *TestPingCategory) TableName() string {
@@ -14,11 +14,11 @@ func (u *TestPingCategory) TableName() string {
 }
 
 type TestPingItem struct {
-	Id			int		`orm:"column(id)"`
-	CategoryId	int		`orm:"column(category_id)"`
-	Item		string	`orm:"column(item)"`
-	Ip			string	`orm:"column(ip)"`
-	Type		int		`orm:"column(type)"`
+	Id			int    `orm:"column(id)"`
+	CategoryId	int    `orm:"column(category_id)"`
+	Title		string `orm:"column(title)"`
+	Ip			string `orm:"column(ip)"`
+	Type		int    `orm:"column(type)"`
 }
 
 func (u *TestPingItem) TableName() string {

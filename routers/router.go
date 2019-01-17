@@ -15,6 +15,8 @@ func init() {
 	beego.Router("/dashboard/showPage", &controllers.ShowPageController{},"*:ShowPage")
 	beego.Router("/test_ping", &controllers.DashBoardController{},"*:TestPing")
 
+	beego.Router("/monitoring/record", &controllers.MonitoringController{},"*:GenerateMonitoringRecord")
+
 	beego.Router("/monitoring/add", &controllers.IpMonitoringController{},"*:AddIPMonitoring")
 	beego.Router("/monitoring/edit", &controllers.IpMonitoringController{},"*:EditIPMonitoring")
 	beego.Router("/monitoring/del", &controllers.IpMonitoringController{},"*:DelIPMonitoring")
