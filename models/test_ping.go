@@ -104,9 +104,11 @@ func AddCategory(o orm.Ormer, title string) (int64, error) {
 }
 
 func AddIPMonitoring(o orm.Ormer, c_id int, title, ip string, t int) (int64, error) {
-	result, err := o.Raw("INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES (?, ?, ?, ?);", c_id, title, ip, t).Exec()
-	id, _ := result.LastInsertId()
-	return id, err
+	res, err := o.Raw("INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES (?, ?, ?, ?);", c_id, title, ip, t).Exec()
+	if err != nil {
+		return -1, err
+	}
+	return res.LastInsertId()
 }
 
 func EditIPMonitoring(o orm.Ormer, id int64, c_id, t int, title, ip string) error {
