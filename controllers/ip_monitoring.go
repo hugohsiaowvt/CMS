@@ -23,6 +23,26 @@ type MonitoringItem struct {
 	Type          int		`json:"action"`
 }
 
+func (this *IpMonitoringController) GetCategoryName() {
+
+	res := &ResponseStatus{}
+	res.Status = -1
+
+	o := orm.NewOrm()
+	category := &[]models.TestPingCategory{}
+
+	if _, err := models.GetCategorysName(o, category); err != nil {
+		res.Msg = "資料庫錯誤！"
+	} else {
+		res.Status = 1
+		res.Ext = category
+	}
+
+	this.Data["json"] = res
+	this.ServeJSON()
+
+}
+
 func (this *IpMonitoringController) AddIPMonitoring() {
 
 	categoryId, _ := this.GetInt("category_id")

@@ -61,6 +61,10 @@ func GetCategory(o orm.Ormer, data *TestPingCategory, id int) error {
 	return o.Raw("SELECT * FROM CMS.testpingcategory WHERE id = ?;", id).QueryRow(data)
 }
 
+func GetCategorysName(o orm.Ormer, data *[]TestPingCategory) (int64, error) {
+	return o.Raw("SELECT * FROM CMS.testpingcategory;").QueryRows(data)
+}
+
 func GetBaseAllTestPingData(o orm.Ormer, data *[]TestPingData) (int64, error) {
 	return o.Raw("SELECT ti.category_id, ti.id AS item_id, tc.title AS category, ti.title AS item, ti.ip as ip, ti.type as type FROM testpingcategory AS tc, testpingitem AS ti WHERE tc.id = ti.category_id ORDER BY tc.id, ti.id;").QueryRows(data)
 }
