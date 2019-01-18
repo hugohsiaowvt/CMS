@@ -97,8 +97,10 @@ func InsertTestPingResult(o orm.Ormer, data TestPingData, date, time string, sta
 
 func AddCategory(o orm.Ormer, title string) (int64, error) {
 	res, err := o.Raw("INSERT INTO `CMS`.`testpingcategory` (`title`) VALUES (?);", title).Exec()
-	id, err := res.LastInsertId()
-	return id, err
+	if err != nil {
+		return -1, err
+	}
+	return res.LastInsertId()
 }
 
 func AddIPMonitoring(o orm.Ormer, c_id int, title, ip string, t int) (int64, error) {
