@@ -92,7 +92,7 @@ function onAddGroup() {
         success:function(result){
            var id = result.Ext ;
             $("#select_group").append("<a class=\"dropdown-item\" id=\"group_"+id+"\" href=\"#\" onclick='selected_group(\""+id+"\")'>"+text+"</a>")
-            selected_group(text)
+            selected_group(id)
         }
     })
     switchMode();
