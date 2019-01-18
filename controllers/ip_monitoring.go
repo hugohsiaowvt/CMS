@@ -43,6 +43,27 @@ func (this *IpMonitoringController) GetCategoryName() {
 
 }
 
+func (this *IpMonitoringController) AddMonitoring() {
+
+	title := this.GetString("title")
+
+	res := &ResponseStatus{}
+	res.Status = -1
+
+	o := orm.NewOrm()
+
+	if id, err := models.AddCategory(o, title); err != nil {
+		res.Msg = "資料庫錯誤！"
+	} else {
+		res.Status = 1
+		res.Ext = id
+	}
+
+	this.Data["json"] = res
+	this.ServeJSON()
+
+}
+
 func (this *IpMonitoringController) AddIPMonitoring() {
 
 	categoryId, _ := this.GetInt("category_id")

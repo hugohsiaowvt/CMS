@@ -18,6 +18,7 @@ func init() {
 	beego.Router("/monitoring/record", &controllers.MonitoringController{},"*:GenerateMonitoringRecord")
 
 	beego.Router("/monitoring/category", &controllers.IpMonitoringController{},"*:GetCategoryName")
+	beego.Router("/monitoring/category/add", &controllers.IpMonitoringController{},"*:AddMonitoring")
 	beego.Router("/monitoring/add", &controllers.IpMonitoringController{},"*:AddIPMonitoring")
 	beego.Router("/monitoring/edit", &controllers.IpMonitoringController{},"*:EditIPMonitoring")
 	beego.Router("/monitoring/del", &controllers.IpMonitoringController{},"*:DelIPMonitoring")
