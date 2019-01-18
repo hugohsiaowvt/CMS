@@ -18,7 +18,8 @@ CREATE TABLE `CMS`.`testpingcategory` (
   `title` VARCHAR(512) NOT NULL DEFAULT '' COMMENT '測試高防類別',
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`));
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `category_name` (`title`));
 
 INSERT INTO `CMS`.`testpingcategory` (`title`) VALUES ('高防400G');
 INSERT INTO `CMS`.`testpingcategory` (`title`) VALUES ('高防800G');
@@ -32,6 +33,7 @@ CREATE TABLE `CMS`.`testpingitem` (
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  CONSTRAINT `monitor_ip` UNIQUE (category_id, ip),
   CONSTRAINT cate_id FOREIGN KEY (category_id) REFERENCES `testpingcategory`(id));
 
 INSERT INTO `CMS`.`testpingitem` (`category_id`, `title`, `ip`, `type`) VALUES ('1', '高防400G_1 119.188.210.1', '119.188.210.1', '2');
