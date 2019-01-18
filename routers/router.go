@@ -15,8 +15,6 @@ func init() {
 	beego.Router("/dashboard/showPage", &controllers.ShowPageController{},"*:ShowPage")
 	beego.Router("/test_ping", &controllers.DashBoardController{},"*:TestPing")
 
-	beego.Router("/monitoring/record", &controllers.MonitoringController{},"*:GenerateMonitoringRecord")
-
 	beego.Router("/monitoring/category", &controllers.IpMonitoringController{},"*:GetCategoryName")
 	beego.Router("/monitoring/category/add", &controllers.IpMonitoringController{},"*:AddMonitoring")
 	beego.Router("/monitoring/add", &controllers.IpMonitoringController{},"*:AddIPMonitoring")
@@ -28,7 +26,10 @@ func init() {
 	beego.Router("/pingresult/edit", &controllers.IpMonitoringController{},"*:EditPingResult")
 
 	beego.Router("/report/pingips", &controllers.TestPingController{}, "*:ReportPingIPs")
+	// 查表或ping ip
 	beego.Router("/api/pingips", &controllers.TestPingController{}, "*:PingIPs")
+	// 加入每日問題報表欄位
+	beego.Router("/api/monitoring/record", &controllers.MonitoringController{},"*:GenerateMonitoringRecord")
 
 	beego.InsertFilter("/*", beego.BeforeExec, FilterUser)
 
