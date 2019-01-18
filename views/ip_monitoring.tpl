@@ -67,6 +67,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary" onclick="CreateSchedule()">建立排程</button>
+                        <button type="submit" class="btn btn-secondary" onclick="CloseSchedule()">取消</button>
                     </form>
                 </div>
             </div>

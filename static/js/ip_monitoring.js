@@ -90,12 +90,23 @@ function onAddGroup() {
             "title":text
         },
         success:function(result){
-           var id = result.Ext ;
-            $("#select_group").append("<a class=\"dropdown-item\" id=\"group_"+id+"\" href=\"#\" onclick='selected_group(\""+id+"\")'>"+text+"</a>")
-            selected_group(id)
+            var response_status = result.Status;
+            var msg = result.Msg;
+            if(response_status<0)
+                alert(msg)
+            else {
+                var id = result.Ext ;
+                $("#select_group").append("<a class=\"dropdown-item\" id=\"group_"+id+"\" href=\"#\" onclick='selected_group(\""+id+"\")'>"+text+"</a>")
+                selected_group(id)
+            }
+
         }
     })
     switchMode();
+}
+
+function CloseSchedule() {
+    $("#collapseTwo").removeClass("show")
 }
 
 function CreateSchedule() {
@@ -123,6 +134,7 @@ function CreateSchedule() {
             else {
                 updatIps();
             }
+            CloseSchedule();
         }
     })
 }
