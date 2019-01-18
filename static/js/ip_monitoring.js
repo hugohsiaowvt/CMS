@@ -2,6 +2,11 @@
 
 }())
 
+var submit_category_id ;
+var submit_title ;
+var submit_ip ;
+var submit_type ;
+
 $(document).ready(function () {
 
     $("#main_container").show();
@@ -14,30 +19,6 @@ $(document).ready(function () {
     })
 })
 
-function addIP() {
-    $("#dialog_div").dialog("open");
-    $.ajax({
-        type:'get',
-        url:'/monitoring/add',
-        data: {
-            "group":"高防400",
-            "title":"高防400_1",
-            "ip":"192.168.1.1"
-        }
-        ,success:function(result){
-            buildDatas(result);
-        }
-    })
-}
-
-function delIP(e) {
-    alert("delIP"+e)
-    console.log(e);
-}
-
-function SearchReport() {
-    alert("SearchReport")
-}
 
 function buildDatas(result) {
     if(result==null)
@@ -59,8 +40,99 @@ function buildDatas(result) {
             "</tr>"
     }
     $("#tbody_datas").html(html);
+
+    UpdateGroupList()
 }
 
+function UpdateGroupList() {
+    $.ajax({
+        type:'get',
+        url:'/monitoring/category',
+        success:function(result){
+           var group_list = result.Ext;
+           $("#select_group").empty();
+           for (var prop in group_list) {
+               var group_info = group_list[prop];
+               var id = group_info.Id;
+               var title = group_info.Title;
+               console.log("id:"+group_info.Id+" title:"+group_info.Title);
+               $("#select_group").append("<a class=\"dropdown-item\" id=\"group_"+id+"\" href=\"#\" onclick='selected_group("+id+")'>"+title+"</a>")
+           }
+        }
+    })
+}
+
+function selected_group(id) {
+    var title = $("#group_"+id).text();
+    if(title == "")
+        title = "請選擇或新增群組"
+    $("#onSelectGroup").text(title);
+    submit_category_id = id;
+}
+
+function switchMode() {
+    if($("#group_input_mode").is(":hidden")) {
+        $("#group_input_mode").show();
+        $("#group_select_mode").hide();
+    } else {
+        $("#group_input_mode").hide();
+        $("#group_select_mode").show();
+    }
+}
+
+
+function onAddGroup() {
+    var text = $("#group_add").val();
+    $.ajax({
+        type:'get',
+        url:'/monitoring/category/add',
+        data:{
+            "title":text
+        },
+        success:function(result){
+           var id = result.Ext ;
+            $("#select_group").append("<a class=\"dropdown-item\" id=\"group_"+id+"\" href=\"#\" onclick='selected_group(\""+id+"\")'>"+text+"</a>")
+            selected_group(text)
+        }
+    })
+    switchMode();
+}
+
+function CreateSchedule() {
+
+    var submit_title = $("#title").val();
+    var submit_ip =  $("#ip").val();
+    console.log("submit_category_id:"+submit_category_id);
+    console.log("submit_title:"+submit_title);
+    console.log("submit_ip:"+submit_ip);
+    console.log("submit_type:"+submit_type);
+    $.ajax({
+        type: 'get',
+        url: '/monitoring/add',
+        data:{
+            "category_id":submit_category_id,
+            "title":submit_title,
+            "ip":submit_ip,
+            "type":submit_type
+        },
+        success:function(result){
+            var response_status = result.Status;
+            var msg = result.Msg;
+            if(response_status<0)
+                alert(msg)
+            else {
+                updatIps();
+            }
+        }
+    })
+}
+
+function actionSelect(e) {
+    var text = $(e).text();
+    var value = $(e).attr("value");
+    $("#onSelectAction").text(text);
+    submit_type = value;
+}
 function edit(prop, id) {
     var root = $("#tr_"+prop);
     editmode = root.find("input[type=text]").css('display') == 'none' ? false : true;
