@@ -52,16 +52,23 @@ type MonitoringCategoryCount struct {
 	Count		int		`orm:"column(count)"`
 }
 
-func GetBaseAllMonitoringSchema(o orm.Ormer, data *[]MonitoringSchema) (int64, error) {
+type MonitoringResultData struct {
+	Id			int    `orm:"column(result_id)"`
+	ItemId		int    `orm:"column(item_id)"`
+	Note		string	`orm:"column(note)"`
+	Remark		string	`orm:"column(remark)"`
+}
+
+func GetBaseAllReportMonitoringSchema(o orm.Ormer, data *[]MonitoringSchema) (int64, error) {
 	return o.Raw("SELECT ri.category_id, ri.id AS item_id, rc.title AS category, ri.title AS item FROM reportcategory AS rc, reportitem AS ri WHERE rc.id = ri.category_id ORDER BY rc.id, ri.id;").QueryRows(data)
 }
 
-func GetBaseMonitoringCategoryCount(o orm.Ormer, data *[]MonitoringCategoryCount) (int64, error) {
+func GetBaseReportMonitoringCategoryCount(o orm.Ormer, data *[]MonitoringCategoryCount) (int64, error) {
 	return o.Raw("SELECT category_id AS id, count(category_id) AS count  FROM reportitem GROUP BY category_id;").QueryRows(data)
 }
 
-func GetMonitoringResultByDate(o orm.Ormer, data *[]TestPingResultData, date1, date2 string) (int64, error) {
-	return o.Raw("SELECT item_id, id AS result_id, time, status FROM testpingresult WHERE (date=? AND time >= '1830') OR (date=? AND time <= '0600') ORDER BY category_id, item_id;", date1, date2).QueryRows(data)
+func GetReportMonitoringResultByDate(o orm.Ormer, data *[]MonitoringResultData, date string) (int64, error) {
+	return o.Raw("SELECT item_id, id AS result_id, note, remark FROM CMS.reportresult WHERE date = ?;", date).QueryRows(data)
 }
 
 func InsertMonitoringResult(o orm.Ormer, date string, data []ReportResult) error {

@@ -25,11 +25,13 @@ func init() {
 	beego.Router("/pingresult/add", &controllers.IpMonitoringController{},"*:AddPingResult")
 	beego.Router("/pingresult/edit", &controllers.IpMonitoringController{},"*:EditPingResult")
 
+	beego.Router("/reportmonitoring/data", &controllers.ReportMonitoringController{}, "*:GetData")
+
 	beego.Router("/report/pingips", &controllers.TestPingController{}, "*:ReportPingIPs")
 	// 查表或ping ip
 	beego.Router("/api/pingips", &controllers.TestPingController{}, "*:PingIPs")
 	// 加入每日問題報表欄位
-	beego.Router("/api/monitoring/record", &controllers.MonitoringController{},"*:GenerateMonitoringRecord")
+	beego.Router("/api/monitoring/record", &controllers.ReportMonitoringController{},"*:GenerateMonitoringRecord")
 
 	beego.InsertFilter("/*", beego.BeforeExec, FilterUser)
 
