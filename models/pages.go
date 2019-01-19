@@ -7,7 +7,7 @@ type Page struct {
 var (
 	PageChilds []Page = []Page {
 		Page{
-			Tag:"問題回報",
+			Tag:"進度狀況",
 			LinkPage:"welcome.tpl",
 			IconPath:"/static/img/report.png",
 		},
@@ -20,6 +20,11 @@ var (
 			Tag:"排程設定",
 			LinkPage:"ip_monitoring.tpl",
 			IconPath:"/static/img/schedule.png",
+		},
+		Page{
+			Tag:"夜間監控事項紀錄",
+			LinkPage:"report_monitoring.tpl",
+			IconPath:"/static/img/report.png",
 		},
 	}
 )
