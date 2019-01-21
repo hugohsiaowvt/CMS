@@ -33,6 +33,9 @@ func init() {
 	// 加入每日問題報表欄位
 	beego.Router("/api/monitoring/record", &controllers.ReportMonitoringController{},"*:GenerateMonitoringRecord")
 
+	beego.Router("/api/fcm", &controllers.FCMController{})
+
+
 	beego.InsertFilter("/*", beego.BeforeExec, FilterUser)
 
 }
