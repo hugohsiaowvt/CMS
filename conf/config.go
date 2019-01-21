@@ -20,7 +20,7 @@ var (
 		"0555",
 	}
 
-	TEST_PLAN_TIME []string = []string {
+	TEST_PLAN_TIME = []string {
 		"PM6:30",
 		"PM7:45",
 		"PM8:15",
@@ -33,5 +33,20 @@ var (
 		"AM03:30",
 		"AM04:45",
 		"AM05:55",
+	}
+
+	OPERATION_LOG_CODE = map[string]string {
+
+		"ADD_IP_CATEGORY_MONITORING":	"101",
+		"ADD_IP_MONITORING":			"102",
+		"ADD_IP_MONITORING_RESULT":		"103",
+
+		"EDIT_IP_CATEGORY_MONITORING":	"201",
+		"EDIT_IP_MONITORING":			"202",
+		"EDIT_IP_MONITORING_RESULT":	"203",
+
+		"DEL_IP_CATEGORY_MONITORING":	"301",
+		"DEL_IP_MONITORING":			"302",
+
 	}
 )

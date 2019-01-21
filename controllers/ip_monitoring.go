@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"CMS/conf"
+	"encoding/json"
 	"fmt"
 	"CMS/models"
 	"github.com/astaxie/beego"
@@ -51,12 +52,21 @@ func (this *IpMonitoringController) AddMonitoring() {
 	res.Status = -1
 
 	o := orm.NewOrm()
+	o.Begin()
 
-	if id, err := models.AddCategory(o, title); err != nil {
-		res.Msg = "資料庫錯誤！"
+	userName := this.GetSession("uname")
+	if err := models.InsertOperationLog(o, conf.OPERATION_LOG_CODE["ADD_IP_CATEGORY_MONITORING"], userName,"", title); err != nil {
+		res.Msg = "資料庫錯誤1！"
+		o.Rollback()
 	} else {
-		res.Status = 1
-		res.Ext = id
+		if id, err := models.AddCategory(o, title); err != nil {
+			res.Msg = "資料庫錯誤2！"
+			o.Rollback()
+		} else {
+			res.Status = 1
+			res.Ext = id
+			o.Commit()
+		}
 	}
 
 	this.Data["json"] = res
@@ -79,16 +89,26 @@ func (this *IpMonitoringController) AddIPMonitoring() {
 	} else {
 
 		o := orm.NewOrm()
+		o.Begin()
 
-		categoryData := &models.TestPingCategory{}
-
-		if err := models.GetCategory(o, categoryData, categoryId); err != nil {
+		userName := this.GetSession("uname")
+		if err := models.InsertOperationLog(o, conf.OPERATION_LOG_CODE["ADD_IP_MONITORING"], userName,"", title); err != nil {
 			res.Msg = "資料庫錯誤1！"
+			o.Rollback()
 		} else {
-			if _, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+			categoryData := &models.TestPingCategory{}
+
+			if err := models.GetCategory(o, categoryData, categoryId); err != nil {
 				res.Msg = "資料庫錯誤2！"
+				o.Rollback()
 			} else {
-				res.Status = 1
+				if _, err := models.AddIPMonitoring(o, categoryId, title, ip, t); err != nil {
+					res.Msg = "資料庫錯誤3！"
+					o.Rollback()
+				} else {
+					res.Status = 1
+					o.Commit()
+				}
 			}
 		}
 	}
@@ -110,19 +130,40 @@ func (this *IpMonitoringController) EditIPMonitoring() {
 	res.Status = -1
 
 	o := orm.NewOrm()
+	o.Begin()
 
-	categoryData := &models.TestPingCategory{}
+	data := models.EditIPMonitoringAfter{
+		ID: id,
+		Category: categoryId,
+		Title: title,
+		IP: ip,
+		Type: t,
+	}
 
-	if err := models.GetCategory(o, categoryData, categoryId); err != nil {
-		res.Msg = "資料庫錯誤！"
+	b, _ := json.Marshal(data)
+
+	userName := this.GetSession("uname")
+	if err := models.InsertOperationLog(o, conf.OPERATION_LOG_CODE["EDIT_IP_MONITORING"], userName,"", string(b)); err != nil {
+		res.Msg = err.Error()
+		o.Rollback()
 	} else {
-		fmt.Print("test1")
-		if err := models.EditIPMonitoring(o, id, categoryId, t, title, ip); err != nil {
-			res.Msg = "資料庫錯誤！"
+		categoryData := &models.TestPingCategory{}
+
+		if err := models.GetCategory(o, categoryData, categoryId); err != nil {
+			res.Msg = err.Error()
+			o.Rollback()
 		} else {
-			res.Status = 1
+			if err := models.EditIPMonitoring(o, id, categoryId, t, title, ip); err != nil {
+				res.Msg = err.Error()
+				o.Rollback()
+			} else {
+				res.Status = 1
+				o.Commit()
+			}
 		}
 	}
+
+
 
 	this.Data["json"] = res
 	this.ServeJSON()
@@ -137,11 +178,19 @@ func (this *IpMonitoringController) DelIPMonitoring() {
 	res.Status = -1
 
 	o := orm.NewOrm()
+	o.Begin()
 
-	if err := models.DelIPMonitoring(o, id); err != nil {
-		res.Msg = "資料庫錯誤！"
+	userName := this.GetSession("uname")
+	if err := models.InsertOperationLog(o, conf.OPERATION_LOG_CODE["DEL_IP_MONITORING"], userName,id, ""); err != nil {
+		res.Msg = err.Error()
+		o.Rollback()
 	} else {
-		res.Status = 1
+		if err := models.DelIPMonitoring(o, id); err != nil {
+			res.Msg = "資料庫錯誤！"
+		} else {
+			res.Status = 1
+			o.Commit()
+		}
 	}
 
 	this.Data["json"] = res
@@ -280,16 +329,29 @@ func (this *IpMonitoringController) AddPingResult() {
 			}
 		}
 
-		if err := models.AddPingResult(o, categoryId, status, itemId, date, time, category, item, ip); err != nil {
-			beego.Debug(err)
-			res.Msg = "資料庫錯誤！"
+		data := models.AddIPMonitoringResultAfter{
+			categoryId, status, itemId, date, time, category, item, ip,
+		}
+
+		b, _ := json.Marshal(data)
+
+		userName := this.GetSession("uname")
+		if err := models.InsertOperationLog(o, conf.OPERATION_LOG_CODE["ADD_IP_MONITORING_RESULT"], userName,"", string(b)); err != nil {
+			res.Msg = err.Error()
+			o.Rollback()
 		} else {
-			res.Status = 1
+			if err := models.AddPingResult(o, categoryId, status, itemId, date, time, category, item, ip); err != nil {
+				res.Msg = err.Error()
+				o.Rollback()
+			} else {
+				res.Status = 1
+				o.Commit()
+			}
 		}
 	} else {
 		res.Msg = "無法新增非當天報表資料！"
 	}
-	fmt.Print(res)
+
 	this.Data["json"] = res
 	this.ServeJSON()
 
@@ -304,26 +366,46 @@ func (this *IpMonitoringController) EditPingResult() {
 	res.Status = -1
 
 	o := orm.NewOrm()
+	o.Begin()
 
 	result := &models.TestPingData{}
 
 	if err := models.GetPingResult(o, result, id); err != nil {
-		beego.Debug(err)
-		res.Msg = "資料庫錯誤！"
+		res.Msg = err.Error()
 	} else {
 		date := result.Date
 		if isToday := CheckIsToday(date); isToday {
-			if err := models.EditPingResult(o, id, status); err != nil {
-				beego.Debug(err)
-				res.Msg = "資料庫錯誤！"
+			beego.Debug(result.Status)
+			before := models.EditIPMonitoringResultBefore{
+				id, result.Status,
+			}
+			b, _ := json.Marshal(before)
+
+			after := models.EditIPMonitoringResultAfter{
+				id, status,
+			}
+			a, _ := json.Marshal(after)
+
+			userName := this.GetSession("uname")
+			if err := models.InsertOperationLog(o, conf.OPERATION_LOG_CODE["EDIT_IP_MONITORING_RESULT"], userName, string(b), string(a)); err != nil {
+				res.Msg = err.Error()
+				beego.Debug("1")
+				o.Rollback()
 			} else {
-				res.Status = 1
+				if err := models.EditPingResult(o, id, status); err != nil {
+					res.Msg = err.Error()
+					o.Rollback()
+				} else {
+					res.Status = 1
+					o.Commit()
+				}
 			}
 		} else {
 			// 非當日
 			res.Msg = "無法修改非當天報表資料！"
 		}
 	}
+
 	this.Data["json"] = res
 	this.ServeJSON()
 
