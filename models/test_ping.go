@@ -26,7 +26,7 @@ func (u *TestPingItem) TableName() string {
 }
 
 type TestPingResultData struct {
-	Id			int    `orm:"column(result_id)"`
+	Id			int    `json:"ResultId" orm:"column(result_id)"`
 	ItemId		int    `orm:"column(item_id)"`
 	Date		string	`orm:"column(date)"`
 	Time		string	`orm:"column(time)"`
