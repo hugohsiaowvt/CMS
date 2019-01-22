@@ -23,7 +23,7 @@ var (
 		},
 		Page{
 			Tag:"夜間監控事項紀錄",
-			LinkPage:"report_monitoring.tpl",
+			LinkPage:"report_monitoring_bak.tpl",
 			IconPath:"/static/img/report.png",
 		},
 	}

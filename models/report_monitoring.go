@@ -53,10 +53,10 @@ type MonitoringCategoryCount struct {
 }
 
 type MonitoringResultData struct {
-	Id			int    `orm:"column(result_id)"`
-	ItemId		int    `orm:"column(item_id)"`
+	Id			int		`orm:"column(result_id)"`
+	ItemId		int		`orm:"column(item_id)"`
+	Status		int		`orm:"column(status)"`
 	Note		string	`orm:"column(note)"`
-	Remark		string	`orm:"column(remark)"`
 }
 
 func GetBaseAllReportMonitoringSchema(o orm.Ormer, data *[]MonitoringSchema) (int64, error) {
@@ -68,7 +68,7 @@ func GetBaseReportMonitoringCategoryCount(o orm.Ormer, data *[]MonitoringCategor
 }
 
 func GetReportMonitoringResultByDate(o orm.Ormer, data *[]MonitoringResultData, date string) (int64, error) {
-	return o.Raw("SELECT item_id, id AS result_id, note, remark FROM CMS.reportresult WHERE date = ?;", date).QueryRows(data)
+	return o.Raw("SELECT item_id, id AS result_id, status, note FROM CMS.reportresult WHERE date = ?;", date).QueryRows(data)
 }
 
 func InsertMonitoringResult(o orm.Ormer, date string, data []ReportResult) error {
