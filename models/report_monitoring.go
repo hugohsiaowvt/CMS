@@ -53,7 +53,7 @@ type MonitoringCategoryCount struct {
 }
 
 type MonitoringResultData struct {
-	Id			int		`orm:"column(result_id)"`
+	Id			int		`json:"ResultId" orm:"column(result_id)"`
 	ItemId		int		`orm:"column(item_id)"`
 	Status		int		`orm:"column(status)"`
 	Note		string	`orm:"column(note)"`
@@ -69,6 +69,28 @@ func GetBaseReportMonitoringCategoryCount(o orm.Ormer, data *[]MonitoringCategor
 
 func GetReportMonitoringResultByDate(o orm.Ormer, data *[]MonitoringResultData, date string) (int64, error) {
 	return o.Raw("SELECT item_id, id AS result_id, status, note FROM CMS.reportresult WHERE date = ?;", date).QueryRows(data)
+}
+
+func GetPreviousReportMonitoringSchema(o orm.Ormer, data *[]MonitoringSchema, date string) (int64, error) {
+	return o.Raw("SELECT category_id, item_id, category, item FROM CMS.reportresult WHERE date = ?;", date).QueryRows(data)
+}
+
+func GetPreviousReportMonitoringCategoryCount(o orm.Ormer, data *[]MonitoringCategoryCount, date string) (int64, error) {
+	return o.Raw("SELECT category_id AS id, count(category_id) FROM CMS.reportresult WHERE date = ? GROUP BY category_id;", date).QueryRows(data)
+}
+
+func GetReportNonitoringResultById(o orm.Ormer, data *MonitoringResultData, id int) error {
+	return o.Raw("SELECT * FROM CMS.reportresult WHERE id = ?;", id).QueryRow(data)
+}
+
+func EditReportMonitoringStatus(o orm.Ormer, id, status int) error {
+	_, err := o.Raw("UPDATE `CMS`.`reportresult` SET `status`= ? WHERE `id`=?;", status, id).Exec()
+	return err
+}
+
+func EditReportMonitoringNote(o orm.Ormer, id int, note string) error {
+	_, err := o.Raw("UPDATE `CMS`.`reportresult` SET `note`= ? WHERE `id`=?;", note, id).Exec()
+	return err
 }
 
 func InsertMonitoringResult(o orm.Ormer, date string, data []ReportResult) error {

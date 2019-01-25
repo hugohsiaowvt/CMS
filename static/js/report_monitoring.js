@@ -58,7 +58,7 @@ function updatDate() {
 
     $.ajax({
         type: 'get',
-        url: '/monitoring/ping',
+        url: '/reportmonitoring/data',
         data:{
             "date": date,
         },
@@ -77,63 +77,89 @@ function buildDatas(result) {
         var ItemId = data.ItemId;  // IP id  int
         var Category = data.Category;  // 分類  string
         var Item = data.Item;   //IP Title  string
+
+        var resultData = result.Result[prop];
+        var resultId = resultData.ResultId
+
         if (Category!=Group) {
             Group = Category;
             var table = '<table class="table table-striped table-sm" id="t'+Group+'"></table>';
             $("#main_container").append('<div style="padding:5px;background:#fafafa;width: 100%;"><h4>'+Group+'</h4></div>').append(table)
-            GenerateTestPlan('t'+Group , result.TestPlanCase);
+            GenerateSchema('t'+Group);
         }
         var node = $("#main_container").find("table#t"+Group);
         var nodeId = "tr"+ItemId;
-        var extNode = GrenerateRow(ItemId,result.Times);
-        var itemnode = '<tr id="'+nodeId+'"><td class="text-center">'+ItemId+'</td><td class="text-center">'+Item+'</td>'+ extNode +'</tr>'
+        var extNode = GrenerateRow(ItemId, resultId);
+        var itemnode =
+            '<tr id="'+nodeId+'">' +
+                '<td class="text-left">'+Item+'</td>' +
+                extNode
+            '</tr>';
         node.append(itemnode);
-
     }
     GreneratePingStatus(result.Result)
-
-    var Date = result.Date;
 }
-function EditStatus(parent_id, e) {
-
-    var text = document.getElementById("tr"+parent_id);
+function EditStatus(parent_id) {
+    var text = document.getElementById("tr" + parent_id);
     var tr = "#tr"+parent_id;
-    var td = "#td"+e;
-    var node = $(tr+" "+td).find("div");
+    var node = $(tr).find("div");
     var status = node.attr("data-status");
     var resultID = node.attr("data-resultid");
-    var url = "/pingresult/edit";
+    var url = "/reportresult/status/edit";
     switch (status) {
-        case undefined:
-            var url = "/pingresult/add";
+        case "0":
+            status = 1;
+            node.find("button").attr('class', 'btn btn-outline-primary').text("正常");
+            node.attr("data-status",status);
+            break;
         case "-1":
-            status = 1
+            status = 1;
             node.find("button").attr('class', 'btn btn-outline-primary').text("正常");
             node.attr("data-status",status);
             break;
         case "1":
-            status = -1
+            status = -1;
             node.find("button").attr('class', 'btn btn-outline-danger').text("異常");
             node.attr("data-status",status);
             break
     }
 
-    var _date = $("#date").val();
-    if (e <= 1200) {
-        //am 所以加一天
-        var date_format = new Date($("#date").val())
-        date_format.setDate(date_format.getDate()+1)
-        _date = convertDateToString(date_format);
-    }
-
     var data = {
-        "result_id":resultID,
-        "item_id":parent_id,
-        "date":_date,
-        "time":e,
-        "status" : status,
-    }
-    ModifyStatus(url,data);
+        "result_id": resultID,
+        "status": status,
+    };
+
+    ModifyStatus(url, data);
+}
+
+function EditNote(parent_id) {
+    var tr = "#tr"+parent_id;
+    note = $(tr+" #td-note").find('textarea').val().replace(/\n/g,'<br>');
+    var node = $(tr).find("div");
+    var resultID = node.attr("data-resultid");
+    var data = {
+        "result_id": resultID,
+        "note": note,
+    };
+
+    $.ajax({
+        type: 'post',
+        url: '/reportresult/note/edit',
+        data: data,
+        success: function(result) {
+            var response_status = result.Status;
+            var msg = result.Msg;
+            if (response_status < 0) {
+                alert(msg);
+            }
+            console.log("response_status:"+response_status+" msg:"+msg)
+        }
+    })
+
+}
+
+function OnChange(parent_id) {
+    // $("#tr"+parent_id+" #td-note").find('textarea');
 }
 
 function convertDateToString (date) {
@@ -142,41 +168,45 @@ function convertDateToString (date) {
     return date.getFullYear()+"-"+MM+"-"+dd;
 }
 
-function ModifyStatus(url,data) {
-
+function ModifyStatus(url, data) {
     $.ajax({
         type: 'get',
         url: url,
-        data:data,
-        success:function(result){
+        data: data,
+        success: function(result) {
             var response_status = result.Status;
             var msg = result.Msg;
-            if(response_status<0)
-                alert(msg)
+            if (response_status < 0) {
+                alert(msg);
+            }
             console.log("response_status:"+response_status+" msg:"+msg)
         }
     })
 }
-function GenerateTestPlan(id , cases) {
+function GenerateSchema(id) {
     var node = $("#main_container").find("table#"+id);
     var caseTitle = '<thead><tr>' +
-        '<th class="text-center">Id</th>' +
-        '<th class="text-center">測試項目</th>';
-    for ( var prop in cases) {
-        caseTitle += '<th class="text-center">'+cases[prop]+'</th>'
-    }
+        '<th class="text-left" width="20%">監控項目</th>' +
+        '<th class="text-left" width="10%">異常情況</th>' +
+        '<th class="text-left" width="60%">備註</th>';
     caseTitle+= '</tr></thead>'
     node.append(caseTitle);
 }
-function GrenerateRow(parent_id,casetime) {
+function GrenerateRow(parent_id) {
     var node = ""
-    for ( var prop in casetime) {
-        var timecase = casetime[prop];
-        if(EditMode) {
-            node += '<td id="td'+timecase+'">'+'<div class="text-center" id="d'+timecase+'"><button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(\''+parent_id+'\',\''+timecase+'\')">尚無值</button>'+'</div></td>'
-        }else {
-            node += '<td id="td'+timecase+'">'+"  "+'</td>'
-        }
+    if(EditMode) {
+        node += '<td id="td-status">'+
+            '<div class="text-center">' +
+                '<button type="button" class="btn btn-outline-secondary" style="font-size: 5px" , onclick="EditStatus(\''+parent_id+'\')">尚無值</button>'+
+            '</div></td>'
+        node += '<td id="td-note">'+
+            '<div class="text-center">'+
+                '<textarea onInput="OnChange(\''+parent_id+'\')" onChange="EditNote(\''+parent_id+'\')" style="width:100%;" rows="3">\n' +
+                '</textarea>'+
+            '</div></td>'
+    } else {
+        node += '<td class="text-center" id="td-status">'+""+'</td>'
+        node += '<td class="text-center" id="td-note">'+""+'</td>'
     }
     return node;
 }
@@ -185,24 +215,35 @@ function GreneratePingStatus( resultData ) {
     for (var prop in resultData) {
         var statusItem = resultData[prop];
         var trID = "tr"+statusItem.ItemId;
-        var tdID = "td"+statusItem.Time;
+        var tdStatus = "td-status";
+        var tdNote = "td-note";
         var resultID = statusItem.ResultId;
         var status = statusItem.Status;
+        var note = statusItem.Note
         if(EditMode) {
-            $("#"+trID+" #"+tdID+" div").attr("data-status",status).attr("data-resultid",resultID);
+            // 狀態
+            $("#"+trID+" #"+tdStatus+" div").attr("data-status",status).attr("data-resultid",resultID);
             if(status == -1){
-                $("#"+trID+" #"+tdID).find('button').text("異常").attr('class', 'btn btn-outline-danger');
+                $("#"+trID+" #"+tdStatus).find('button').text("異常").attr('class', 'text-left btn btn-outline-danger');
             }
             else if(status == 1) {
-                $("#"+trID+" #"+tdID).find('button').text("正常").attr('class', 'btn btn-outline-primary')
+                $("#"+trID+" #"+tdStatus).find('button').text("正常").attr('class', 'text-left btn btn-outline-primary');
             }
-        } else {
-            if(status == -1)
-                $("#"+trID+" #"+tdID).text("異常").css('color', 'red').attr('class','text-center');
-            else if(status == 1) {
-                $("#"+trID+" #"+tdID).text("正常").css('color', 'blue').attr('class','text-center');
-            }
-        }
+            // 備註
+            $("#"+trID+" #"+tdNote+" div").attr("data-resultid",resultID);
 
+            note = note.replace(/\<br>/g,'\n');
+            console.log(note)
+            $("#"+trID+" #"+tdNote).find('textarea').text(note).attr('class', 'form-control').attr('rows', '6');
+        } else {
+            // 狀態
+            if(status == -1)
+                $("#"+trID+" #"+tdStatus).text("異常").css('color', 'red').attr('class','text-left');
+            else if(status == 1) {
+                $("#"+trID+" #"+tdStatus).text("正常").css('color', 'blue').attr('class','text-left');
+            }
+            // 備註
+            $("#"+trID+" #"+tdNote).html(note).attr('class','text-left');
+        }
     }
 }

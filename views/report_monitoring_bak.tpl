@@ -24,7 +24,7 @@
 <body>
 <div>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">排程監聽</h1>
+        <h1 class="h2">夜間監控事項記錄</h1>
 
         <div class="btn-toolbar mb-2 mb-md-0" style="margin-right: 20px">
             <span style="align-self: center">選擇日期：</span> <div class="input-group date form_datetime" data-date="1979-09-16" data-date-format="yyyy-mm-dd">

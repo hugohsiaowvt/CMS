@@ -163,8 +163,6 @@ func (this *IpMonitoringController) EditIPMonitoring() {
 		}
 	}
 
-
-
 	this.Data["json"] = res
 	this.ServeJSON()
 
@@ -376,12 +374,12 @@ func (this *IpMonitoringController) EditPingResult() {
 		date := result.Date
 		if isToday := CheckIsToday(date); isToday {
 			beego.Debug(result.Status)
-			before := models.EditIPMonitoringResultBefore{
+			before := models.EditStatusBefore{
 				id, result.Status,
 			}
 			b, _ := json.Marshal(before)
 
-			after := models.EditIPMonitoringResultAfter{
+			after := models.EditStatusAfter{
 				id, status,
 			}
 			a, _ := json.Marshal(after)

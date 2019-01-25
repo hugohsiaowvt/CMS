@@ -26,6 +26,8 @@ func init() {
 	beego.Router("/pingresult/edit", &controllers.IpMonitoringController{},"*:EditPingResult")
 
 	beego.Router("/reportmonitoring/data", &controllers.ReportMonitoringController{}, "*:GetData")
+	beego.Router("/reportresult/status/edit", &controllers.ReportMonitoringController{},"*:EditReportStatus")
+	beego.Router("/reportresult/note/edit", &controllers.ReportMonitoringController{},"*:EditReportNote")
 
 	beego.Router("/report/pingips", &controllers.TestPingController{}, "*:ReportPingIPs")
 	// 查表或ping ip

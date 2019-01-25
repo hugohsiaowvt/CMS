@@ -57,39 +57,6 @@ type TestPingCategoryCount struct {
 	Count		int		`orm:"column(count)"`
 }
 
-//===LOG===
-
-type EditIPMonitoringAfter struct {
-	ID int64
-	Category int
-	Title string
-	IP string
-	Type int
-}
-
-type AddIPMonitoringResultAfter struct {
-	CategoryId int
-	Status int
-	ItemId int64
-	Date string
-	Time string
-	Category string
-	Item string
-	IP string
-}
-
-type EditIPMonitoringResultBefore struct {
-	Id int
-	Status int
-}
-
-type EditIPMonitoringResultAfter struct {
-	Id int
-	Status int
-}
-
-//===LOG===
-
 func GetCategory(o orm.Ormer, data *TestPingCategory, id int) error {
 	return o.Raw("SELECT * FROM CMS.testpingcategory WHERE id = ?;", id).QueryRow(data)
 }
