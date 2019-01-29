@@ -43,11 +43,20 @@ function initViewEvent() {
 
 }
 
-function  CheckCurrentDate(){    //sDate1和sDate2是2002-12-18格式
+function  CheckCurrentDate() {    //sDate1和sDate2是2002-12-18格式
     var date = $('#date').val();
     var dest_date = new Date(date);
     var now_date = new Date(convertDateToString (new Date()));
-    return dest_date - now_date < 0 ? false : true;
+    // 如果跨日後還沒有超過早上六點就還能修改
+    if (dest_date - now_date == -86400000) {
+        var today=new Date();
+        var h = (today.getHours()<10 ? '0' : '')+today.getHours();
+        var m = (today.getMinutes()<10 ? '0' : '')+today.getMinutes();
+        var currentDateTime = h + m;
+        return currentDateTime <= "0600" ? true : false;
+    } else {
+        return dest_date - now_date < 0 ? false : true;
+    }
 }
 
 function updatDate() {
